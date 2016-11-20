@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">科学脱口秀</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="creator">by %s</string>
+</resources>
