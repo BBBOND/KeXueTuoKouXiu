@@ -21,7 +21,6 @@ import com.kim.kexuetuokouxiu.R;
 import com.kim.kexuetuokouxiu.app.presenter.DetailPresenter;
 import com.kim.kexuetuokouxiu.app.view.DetailView;
 import com.kim.kexuetuokouxiu.bean.Programme;
-import com.kim.kexuetuokouxiu.service.PlayService;
 
 public class DetailActivity extends AppCompatActivity implements DetailView {
 
@@ -33,8 +32,6 @@ public class DetailActivity extends AppCompatActivity implements DetailView {
     private ProgressDialog progressDialog;
 
     private boolean isShowAll = false;
-
-    private PlayService playService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,25 +53,6 @@ public class DetailActivity extends AppCompatActivity implements DetailView {
             finish();
         programme = intent.getParcelableExtra("programme");
         Log.d("---->", programme.toString());
-
-
-//        // TODO: 2016/11/17
-//        Intent i = new Intent(this, PlayService.class);
-//        i.putExtra("programme", programme);
-//        bindService(i, new ServiceConnection() {
-//            @Override
-//            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-//                PlayService.LocalBinder binder = (PlayService.LocalBinder) iBinder;
-//                playService = binder.getService();
-//            }
-//
-//            @Override
-//            public void onServiceDisconnected(ComponentName componentName) {
-//
-//            }
-//        }, Context.BIND_AUTO_CREATE);
-
-
     }
 
     private void initView() {

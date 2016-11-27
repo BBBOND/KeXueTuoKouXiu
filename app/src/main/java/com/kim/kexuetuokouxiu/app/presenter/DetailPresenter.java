@@ -1,5 +1,8 @@
 package com.kim.kexuetuokouxiu.app.presenter;
 
+import android.os.Handler;
+import android.os.Message;
+
 import com.kim.kexuetuokouxiu.app.activity.DetailActivity;
 import com.kim.kexuetuokouxiu.utils.Player;
 
@@ -14,6 +17,14 @@ public class DetailPresenter {
 
     private boolean isPlaying = false;
     private boolean isPlayed = false;
+
+    private Handler progressHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            activity.onPlaying();
+            return true;
+        }
+    });
 
     public DetailPresenter(DetailActivity activity) {
         this.activity = activity;
@@ -44,11 +55,11 @@ public class DetailPresenter {
             public void run() {
                 player.playUrl(url);
                 isPlayed = true;
+                progressHandler.sendEmptyMessage(1);
                 activity.hideProgress();
             }
         }).start();
         isPlaying = true;
-        activity.onPlaying();
     }
 
     public void play() {
