@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -14,22 +16,35 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.kim.kexuetuokouxiu.R;
-import com.kim.kexuetuokouxiu.app.presenter.DetailPresenter;
-import com.kim.kexuetuokouxiu.app.view.DetailView;
+import com.kim.kexuetuokouxiu.app.adapter.CommentAdapter;
+import com.kim.kexuetuokouxiu.app.contract.DetailContract;
+import com.kim.kexuetuokouxiu.app.presenter.DetailPresenterImpl;
+import com.kim.kexuetuokouxiu.bean.Comment;
 import com.kim.kexuetuokouxiu.bean.Programme;
 
-public class DetailActivity extends AppCompatActivity implements DetailView {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DetailActivity extends AppCompatActivity implements DetailContract.View {
 
     private TextView tvSubTitle;
     private Programme programme;
     private FloatingActionButton fabPlay;
     private SeekBar sbState;
-    private DetailPresenter presenter;
+    private DetailContract.Presenter presenter;
     private ProgressDialog progressDialog;
+    private TextView tvNoComment;
+    private TextView tvCommentNum;
+    private RecyclerView rvComments;
 
     private boolean isShowAll = false;
 
@@ -37,6 +52,7 @@ public class DetailActivity extends AppCompatActivity implements DetailView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        presenter = new DetailPresenterImpl(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -44,7 +60,6 @@ public class DetailActivity extends AppCompatActivity implements DetailView {
         initData();
         initView();
         initEvent();
-        presenter = new DetailPresenter(this);
     }
 
     private void initData() {
@@ -60,13 +75,18 @@ public class DetailActivity extends AppCompatActivity implements DetailView {
         tvSubTitle = (TextView) findViewById(R.id.tvSubTitle);
         fabPlay = (FloatingActionButton) findViewById(R.id.fabPlay);
         sbState = (SeekBar) findViewById(R.id.sbState);
+        tvNoComment = (TextView) findViewById(R.id.tvNoComment);
+        tvCommentNum = (TextView) findViewById(R.id.tvCommentNum);
+        rvComments = (RecyclerView) findViewById(R.id.rvComments);
 
         setTitle(programme.getTitle());
         tvTitle.setText(programme.getTitle());
         tvSubTitle.setText(Html.fromHtml(programme.getContentEncoded()));
+        tvCommentNum.setText(getResources().getString(R.string.comment_num, programme.getSlashComments()));
 //        tvSubTitle.setText(programme.toString());
         sbState.setOnSeekBarChangeListener(new SeekBarChangeEvent());
         sbState.setEnabled(false);
+        presenter.showComments(programme.getWfwCommentRss());
     }
 
     private void initEvent() {
@@ -185,6 +205,34 @@ public class DetailActivity extends AppCompatActivity implements DetailView {
     public void hideProgress() {
         if (progressDialog.isShowing())
             progressDialog.cancel();
+    }
+
+    @Override
+    public void showComments(final List<Comment> comments) {
+        if (tvNoComment != null)
+            tvNoComment.setVisibility(View.GONE);
+        if (tvCommentNum != null)
+            tvCommentNum.setText(getResources().getString(R.string.comment_num, "" + comments.size()));
+//        if (lvComments != null) {
+//            lvComments.setVisibility(View.VISIBLE);
+//            List<String> s = new ArrayList<>();
+//            for (Comment c : comments) {
+//                s.add(c.getCreator() + "\n" + c.getPubDate() + "\n" + c.getDescription());
+//            }
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, s);
+//            lvComments.setAdapter(adapter);
+//        }
+        if (rvComments != null) {
+            rvComments.setVisibility(View.VISIBLE);
+            rvComments.setLayoutManager(new LinearLayoutManager(DetailActivity.this, LinearLayoutManager.VERTICAL, false));
+            rvComments.setAdapter(new CommentAdapter(this, comments));
+        }
+    }
+
+    @Override
+    public void showNoComment() {
+        if (tvNoComment != null)
+            tvNoComment.setVisibility(View.VISIBLE);
     }
 
     class SeekBarChangeEvent implements SeekBar.OnSeekBarChangeListener {

@@ -2,4 +2,6 @@
     <string name="app_name">科学脱口秀</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="creator">by %s</string>
+    <string name="casting_to_device">Casting to %1$s</string>
+    <string name="comment_num">共%s条</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.kim.kexuetuokouxiu.utils;
 
+import com.kim.kexuetuokouxiu.bean.Comment;
 import com.kim.kexuetuokouxiu.bean.Programme;
 import com.kim.kexuetuokouxiu.bean.ScienceTalkShow;
 
@@ -8,6 +9,8 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Weya on 2016/11/10.
@@ -15,7 +18,7 @@ import java.io.InputStream;
 
 public class ParseUtil {
 
-    public static ScienceTalkShow parseXml2Obj(String xml) {
+    public static ScienceTalkShow parseXml2ScienceTalkShow(String xml) {
         ScienceTalkShow scienceTalkShow = null;
         Programme programme = null;
         try {
@@ -116,7 +119,56 @@ public class ParseUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            scienceTalkShow = null;
         }
         return scienceTalkShow;
+    }
+
+    public static List<Comment> parseXml2Comments(String xml) {
+        List<Comment> comments = null;
+        Comment comment = null;
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = factory.newPullParser();
+            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+            parser.setInput(is, "UTF-8");
+
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                String nodeName = parser.getName();
+                switch (eventType) {
+                    case XmlPullParser.START_DOCUMENT:
+                        comments = new ArrayList<>();
+                        break;
+                    case XmlPullParser.START_TAG:
+                        if ("item".equals(nodeName)) {
+                            comment = new Comment();
+                        } else if ("title".equals(nodeName) && comment != null) {
+                            comment.setTitle(parser.nextText());
+                        } else if ("link".equals(nodeName) && comment != null) {
+                            comment.setLink(parser.nextText());
+                        } else if ("dc:creator".equals(nodeName) && comment != null) {
+                            comment.setCreator(parser.nextText());
+                        } else if ("pubDate".equals(nodeName) && comment != null) {
+                            comment.setPubDate(parser.nextText());
+                        } else if ("description".equals(nodeName) && comment != null) {
+                            comment.setDescription(parser.nextText());
+                        } else if ("content:encoded".equals(nodeName) && comment != null) {
+                            comment.setContent(parser.nextText());
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if ("item".equals(nodeName) && comments != null && comment != null) {
+                            comments.add(comment);
+                            comment = null;
+                        }
+                        break;
+                }
+                eventType = parser.next();
+            }
+        } catch (Exception e) {
+            comments = null;
+        }
+        return comments;
     }
 }

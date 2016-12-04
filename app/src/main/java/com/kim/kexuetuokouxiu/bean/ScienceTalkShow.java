@@ -3,11 +3,14 @@ package com.kim.kexuetuokouxiu.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import io.realm.RealmList;
+import io.realm.RealmObject;
+
 /**
  * Created by Weya on 2016/11/10.
  */
 
-public class ScienceTalkShow implements Serializable {
+public class ScienceTalkShow extends RealmObject implements Serializable {
 
     private String title;
     private String link;
@@ -20,7 +23,7 @@ public class ScienceTalkShow implements Serializable {
     private String copyright;
     private String itunes_subtitle;
 
-    private ArrayList<Programme> programmes = new ArrayList<>();
+    private RealmList<Programme> programmes = new RealmList<>();
 
     public String getTitle() {
         return title;
@@ -102,13 +105,13 @@ public class ScienceTalkShow implements Serializable {
         this.itunes_subtitle = itunes_subtitle;
     }
 
-    public ArrayList<Programme> getProgrammes() {
+    public RealmList<Programme> getProgrammes() {
         return programmes;
     }
 
     public void addProgramme(Programme programme) {
         if (programmes == null)
-            programmes = new ArrayList<>();
+            programmes = new RealmList<>();
         programmes.add(programme);
     }
 

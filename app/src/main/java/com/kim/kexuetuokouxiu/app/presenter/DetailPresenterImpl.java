@@ -4,16 +4,22 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.kim.kexuetuokouxiu.app.activity.DetailActivity;
+import com.kim.kexuetuokouxiu.app.contract.DetailContract;
+import com.kim.kexuetuokouxiu.app.model.DetailModelImpl;
+import com.kim.kexuetuokouxiu.bean.Comment;
 import com.kim.kexuetuokouxiu.utils.Player;
+
+import java.util.List;
 
 /**
  * Created by Weya on 2016/11/15.
  */
 
-public class DetailPresenter {
+public class DetailPresenterImpl implements DetailContract.Presenter {
 
-    private DetailActivity activity;
+    private DetailContract.View view;
     private Player player;
+    private DetailContract.Model model;
 
     private boolean isPlaying = false;
     private boolean isPlayed = false;
@@ -21,32 +27,66 @@ public class DetailPresenter {
     private Handler progressHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
-            activity.onPlaying();
+            view.onPlaying();
             return true;
         }
     });
 
-    public DetailPresenter(DetailActivity activity) {
-        this.activity = activity;
+    public DetailPresenterImpl(DetailActivity activity) {
+        this.view = activity;
         player = new Player();
+        model = new DetailModelImpl();
     }
 
+    @Override
+    public void showComments(String link) {
+        if (link == null || link.equals("")) {
+            view.showNoComment();
+            return;
+        }
+        model.getComments(link, new DetailModelImpl.Callback() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSucceed(List<Comment> comments) {
+                if (comments == null || comments.size() <= 0)
+                    view.showNoComment();
+                else
+                    view.showComments(comments);
+            }
+
+            @Override
+            public void onFailed() {
+                view.showNoComment();
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        });
+    }
+
+    @Override
     public void playFirst(final String url) {
-        activity.showProgress();
+        view.showProgress();
         player.setListener(new Player.OnProgressChangeListener() {
             @Override
             public void progressChanged(int progress) {
-                activity.changeProgress(progress);
+                view.changeProgress(progress);
             }
 
             @Override
             public void secondaryProgressChanged(int progress) {
-                activity.secondaryProgressChanged(progress);
+                view.secondaryProgressChanged(progress);
             }
 
             @Override
             public void completion() {
-                activity.onCompletion();
+                view.onCompletion();
                 isPlaying = false;
             }
         });
@@ -56,52 +96,60 @@ public class DetailPresenter {
                 player.playUrl(url);
                 isPlayed = true;
                 progressHandler.sendEmptyMessage(1);
-                activity.hideProgress();
+                view.hideProgress();
             }
         }).start();
         isPlaying = true;
     }
 
+    @Override
     public void play() {
         player.play();
         isPlaying = true;
-        activity.onPlaying();
+        view.onPlaying();
     }
 
+    @Override
     public void pause() {
         player.pause();
         isPlaying = false;
-        activity.onPaused();
+        view.onPaused();
     }
 
+    @Override
     public void stop() {
         player.stop();
         isPlaying = false;
-        activity.onPaused();
+        view.onPaused();
     }
 
+    @Override
     public int getDuration() {
         return player.mediaPlayer.getDuration();
     }
 
+    @Override
     public void startChangeProgress() {
         player.setPressed(true);
     }
 
+    @Override
     public void changeProgress(int progress) {
         player.mediaPlayer.seekTo(progress);
     }
 
+    @Override
     public void endChangeProgress() {
         player.setPressed(false);
     }
 
+    @Override
     public boolean isPlaying() {
         return isPlaying;
     }
 
+    @Override
     public boolean isPlayed() {
         return isPlayed;
     }
-
 }

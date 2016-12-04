@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvCreator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="发布人" />
+
+    <TextView
+        android:id="@+id/tvPubDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="2016-12-4 21:15"
+        android:textColor="#8C8C8C"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="内容内容"
+        android:textColor="#454545" />
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.kim.kexuetuokouxiu.app.activity;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -18,19 +19,19 @@ import android.widget.ImageView;
 
 import com.kim.kexuetuokouxiu.R;
 import com.kim.kexuetuokouxiu.app.adapter.ProgrammeAdapter;
-import com.kim.kexuetuokouxiu.app.presenter.MainPresenter;
-import com.kim.kexuetuokouxiu.app.view.MainView;
+import com.kim.kexuetuokouxiu.app.contract.MainContract;
+import com.kim.kexuetuokouxiu.app.presenter.MainPresenterImpl;
 import com.kim.kexuetuokouxiu.bean.Programme;
 import com.kim.kexuetuokouxiu.bean.ScienceTalkShow;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MainView, SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements MainContract.View, SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView rvShowList;
     private SwipeRefreshLayout srlRefresh;
 
-    private MainPresenter presenter;
+    private MainContract.Presenter presenter;
 
     private ArrayList<Programme> programmeList;
     private ProgrammeAdapter adapter;
@@ -67,10 +68,14 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
                 }
             }
         });
-        rvShowList.setLayoutManager(new GridLayoutManager(getBaseContext(), 2));
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            rvShowList.setLayoutManager(new GridLayoutManager(getBaseContext(), 2));
+        } else {
+            rvShowList.setLayoutManager(new GridLayoutManager(getBaseContext(), 3));
+        }
         rvShowList.setAdapter(adapter);
 
-        presenter = new MainPresenter(this);
+        presenter = new MainPresenterImpl(this);
         presenter.getScienceTalkShow();
     }
 
@@ -91,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
     @Override
     public void onRefresh() {
         if (presenter == null)
-            presenter = new MainPresenter(this);
+            presenter = new MainPresenterImpl(this);
         presenter.getScienceTalkShow();
     }
 
@@ -105,4 +110,6 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
         Log.d("---->", scienceTalkShow.toString());
         Log.d("---->", "===========================");
     }
+
+
 }

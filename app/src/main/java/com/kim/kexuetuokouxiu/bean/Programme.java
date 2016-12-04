@@ -3,11 +3,17 @@ package com.kim.kexuetuokouxiu.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.UUID;
+
+import io.realm.RealmObject;
+
 /**
  * Created by Weya on 2016/11/10.
  */
 
-public class Programme implements Parcelable {
+public class Programme extends RealmObject implements Parcelable {
+
+    private String id = UUID.randomUUID().toString();
     private String title;
     private String link;
     private String commentsUrl;
@@ -26,6 +32,7 @@ public class Programme implements Parcelable {
     }
 
     protected Programme(Parcel in) {
+        id = in.readString();
         title = in.readString();
         link = in.readString();
         commentsUrl = in.readString();
@@ -52,6 +59,10 @@ public class Programme implements Parcelable {
             return new Programme[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
@@ -160,7 +171,8 @@ public class Programme implements Parcelable {
     @Override
     public String toString() {
         return "Programme{" +
-                "title='" + title + '\'' +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
                 ", link='" + link + '\'' +
                 ", commentsUrl='" + commentsUrl + '\'' +
                 ", pubDate='" + pubDate + '\'' +
@@ -173,7 +185,7 @@ public class Programme implements Parcelable {
                 ", enclosureUrl='" + enclosureUrl + '\'' +
                 ", duration='" + duration + '\'' +
                 ", listened=" + listened +
-                "}\n";
+                '}';
     }
 
     @Override
@@ -183,6 +195,7 @@ public class Programme implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(title);
         parcel.writeString(link);
         parcel.writeString(commentsUrl);
