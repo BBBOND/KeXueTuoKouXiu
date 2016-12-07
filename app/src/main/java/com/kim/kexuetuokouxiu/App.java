@@ -8,6 +8,8 @@ import com.yolanda.nohttp.URLConnectionNetworkExecutor;
 import com.yolanda.nohttp.cache.DBCacheStore;
 import com.yolanda.nohttp.cookie.DBCookieStore;
 
+import io.realm.Realm;
+
 /**
  * Created by Weya on 2016/11/10.
  */
@@ -26,5 +28,6 @@ public class App extends Application {
         );
         Logger.setDebug(true);
         Logger.setTag("NoHttp");
+        Realm.init(this);
     }
 }

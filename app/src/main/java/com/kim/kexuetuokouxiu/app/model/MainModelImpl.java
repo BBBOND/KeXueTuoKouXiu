@@ -2,6 +2,7 @@ package com.kim.kexuetuokouxiu.app.model;
 
 import com.kim.kexuetuokouxiu.app.contract.MainContract;
 import com.kim.kexuetuokouxiu.bean.ScienceTalkShow;
+import com.kim.kexuetuokouxiu.db.ScienceTalkShowDao;
 import com.kim.kexuetuokouxiu.network.RemoteClient;
 import com.kim.kexuetuokouxiu.utils.ParseUtil;
 import com.yolanda.nohttp.rest.OnResponseListener;
@@ -23,6 +24,7 @@ public class MainModelImpl implements MainContract.Model {
                 getScienceTalkShowFromRemote(callback);
                 break;
             case FROM_LOCAL:
+                getScienceTalkShowFromLocal(callback);
                 break;
         }
     }
@@ -37,7 +39,9 @@ public class MainModelImpl implements MainContract.Model {
             @Override
             public void onSucceed(int what, Response<String> response) {
                 String xml = response.get();
-                callback.onSucceed(ParseUtil.parseXml2ScienceTalkShow(xml));
+                ScienceTalkShow scienceTalkShow = ParseUtil.parseXml2ScienceTalkShow(xml);
+                callback.onSucceed(scienceTalkShow);
+                ScienceTalkShowDao.saveOrUpdate(scienceTalkShow);
             }
 
             @Override
@@ -50,6 +54,19 @@ public class MainModelImpl implements MainContract.Model {
                 callback.onFinish();
             }
         });
+    }
+
+    private void getScienceTalkShowFromLocal(final Callback callback) {
+        callback.onStart();
+        try {
+            ScienceTalkShow scienceTalkShow = ScienceTalkShowDao.getScienceTalkShow();
+            callback.onSucceed(scienceTalkShow);
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onFailed();
+        } finally {
+            callback.onFinish();
+        }
     }
 
     public interface Callback {

@@ -42,6 +42,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_main);
 
+        initView();
+
+        presenter = new MainPresenterImpl(this);
+        presenter.getScienceTalkShow();
+    }
+
+    private void initView() {
         rvShowList = (RecyclerView) findViewById(R.id.rvShowList);
         srlRefresh = (SwipeRefreshLayout) findViewById(R.id.srlRefresh);
         srlRefresh.setColorSchemeColors(Color.parseColor("#FCC21C"), Color.parseColor("#A4D226"), Color.parseColor("#F2765F"), Color.parseColor("#77D1D6"));
@@ -74,9 +81,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             rvShowList.setLayoutManager(new GridLayoutManager(getBaseContext(), 3));
         }
         rvShowList.setAdapter(adapter);
-
-        presenter = new MainPresenterImpl(this);
-        presenter.getScienceTalkShow();
     }
 
     @Override

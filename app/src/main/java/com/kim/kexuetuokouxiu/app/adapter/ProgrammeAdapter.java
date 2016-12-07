@@ -1,11 +1,7 @@
 package com.kim.kexuetuokouxiu.app.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.Inflater;
 
 /**
  * Created by Weya on 2016/11/11.
@@ -52,9 +47,8 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.View
         Programme programme = programmeList.get(position);
         holder.tvTitle.setText(programme.getTitle());
         holder.tvCreator.setText(programme.getDcCreator());
-        SimpleDateFormat sdf = new SimpleDateFormat("MM月dd,yyyy", Locale.CHINA);
-        Date date = new Date(programme.getPubDate());
-        holder.tvPubDate.setText(sdf.format(date));
+        SimpleDateFormat sdf = new SimpleDateFormat("MM月dd yyyy", Locale.CHINA);
+        holder.tvPubDate.setText(sdf.format(new Date(programme.getPubDate())));
         holder.itemView.setTag(programme);
         if (listener != null)
             holder.itemView.setOnClickListener(new View.OnClickListener() {

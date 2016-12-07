@@ -9,7 +9,10 @@ import android.widget.TextView;
 import com.kim.kexuetuokouxiu.R;
 import com.kim.kexuetuokouxiu.bean.Comment;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Weya on 2016/12/4.
@@ -35,7 +38,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         Comment comment = comments.get(position);
         holder.tvCreator.setText(comment.getCreator());
-        holder.tvPubDate.setText(comment.getPubDate());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM hh:mm", Locale.CHINA);
+        holder.tvPubDate.setText(format.format(new Date(comment.getPubDate())));
         holder.tvContent.setText(comment.getDescription());
     }
 

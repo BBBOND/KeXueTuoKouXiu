@@ -213,15 +213,6 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
             tvNoComment.setVisibility(View.GONE);
         if (tvCommentNum != null)
             tvCommentNum.setText(getResources().getString(R.string.comment_num, "" + comments.size()));
-//        if (lvComments != null) {
-//            lvComments.setVisibility(View.VISIBLE);
-//            List<String> s = new ArrayList<>();
-//            for (Comment c : comments) {
-//                s.add(c.getCreator() + "\n" + c.getPubDate() + "\n" + c.getDescription());
-//            }
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, s);
-//            lvComments.setAdapter(adapter);
-//        }
         if (rvComments != null) {
             rvComments.setVisibility(View.VISIBLE);
             rvComments.setLayoutManager(new LinearLayoutManager(DetailActivity.this, LinearLayoutManager.VERTICAL, false));
