@@ -24,7 +24,32 @@ public class MainPresenterImpl implements MainContract.Presenter {
     }
 
     @Override
-    public void getScienceTalkShow() {
+    public void getScienceTalkShowFromLocal() {
+        model.getScienceTalkShow(new MainModelImpl.Callback() {
+            @Override
+            public void onStart() {
+                view.showRefreshProgress();
+            }
+
+            @Override
+            public void onSucceed(ScienceTalkShow scienceTalkShow) {
+                view.receiveScienceTalkShow(scienceTalkShow);
+            }
+
+            @Override
+            public void onFailed() {
+                getScienceTalkShowFromRemote();
+            }
+
+            @Override
+            public void onFinish() {
+                view.hideRefreshProgress();
+            }
+        }, MainModelImpl.FROM_LOCAL);
+    }
+
+    @Override
+    public void getScienceTalkShowFromRemote() {
         model.getScienceTalkShow(new MainModelImpl.Callback() {
             @Override
             public void onStart() {

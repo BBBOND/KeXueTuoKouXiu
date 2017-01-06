@@ -34,6 +34,8 @@ import com.kim.kexuetuokouxiu.bean.Programme;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kim.kexuetuokouxiu.app.activity.MainActivity.DETAIL_REQUEST_CODE;
+
 public class DetailActivity extends AppCompatActivity implements DetailContract.View {
 
     private TextView tvSubTitle;
@@ -155,8 +157,9 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         presenter.stop();
+        setResult(DETAIL_REQUEST_CODE, getIntent());
+        super.onDestroy();
     }
 
     @Override

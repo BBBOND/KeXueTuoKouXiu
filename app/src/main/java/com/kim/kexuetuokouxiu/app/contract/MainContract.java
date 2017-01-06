@@ -18,7 +18,9 @@ public class MainContract {
     }
 
     public interface Presenter {
-        void getScienceTalkShow();
+        void getScienceTalkShowFromLocal();
+
+        void getScienceTalkShowFromRemote();
     }
 
     public interface Model {

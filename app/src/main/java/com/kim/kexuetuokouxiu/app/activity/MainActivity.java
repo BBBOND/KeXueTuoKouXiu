@@ -36,16 +36,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ArrayList<Programme> programmeList;
     private ProgrammeAdapter adapter;
 
+    public static final int DETAIL_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_main);
 
         initView();
 
         presenter = new MainPresenterImpl(this);
-        presenter.getScienceTalkShow();
+        presenter.getScienceTalkShowFromLocal();
     }
 
     private void initView() {
@@ -68,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     intent.putExtra("programme", programmeList.get(position));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, Pair.create((View) ivProgrammeImg, "programmeImg"));
-                        startActivity(intent, option.toBundle());
+                        startActivityForResult(intent, DETAIL_REQUEST_CODE, option.toBundle());
                     } else {
-                        startActivity(intent);
+                        startActivityForResult(intent, DETAIL_REQUEST_CODE);
                     }
                 }
             }
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onRefresh() {
         if (presenter == null)
             presenter = new MainPresenterImpl(this);
-        presenter.getScienceTalkShow();
+        presenter.getScienceTalkShowFromRemote();
     }
 
     @Override
@@ -115,5 +116,21 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Log.d("---->", "===========================");
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case DETAIL_REQUEST_CODE:
+                if (resultCode == RESULT_OK && data != null) {
+                    Programme programme = (Programme) data.getSerializableExtra("programme");
+                    int index = programmeList.indexOf(programme);
+                    if (index >= 0)
+                        rvShowList.scrollToPosition(index);
+                }
+        }
+    }
 }

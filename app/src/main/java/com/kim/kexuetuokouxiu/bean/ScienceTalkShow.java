@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Weya on 2016/11/10.
@@ -12,6 +13,7 @@ import io.realm.RealmObject;
 
 public class ScienceTalkShow extends RealmObject implements Serializable {
 
+    @PrimaryKey
     private String title;
     private String link;
     private String description;
