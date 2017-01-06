@@ -11,10 +11,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
 
 import com.kim.kexuetuokouxiu.R;
@@ -23,6 +21,7 @@ import com.kim.kexuetuokouxiu.app.contract.MainContract;
 import com.kim.kexuetuokouxiu.app.presenter.MainPresenterImpl;
 import com.kim.kexuetuokouxiu.bean.Programme;
 import com.kim.kexuetuokouxiu.bean.ScienceTalkShow;
+import com.kim.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.ArrayList;
 
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ProgrammeAdapter adapter;
 
     public static final int DETAIL_REQUEST_CODE = 1;
+    public static final String PROGRAMME = "programme";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +60,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         adapter.setListener(new ProgrammeAdapter.OnClickListener() {
             @Override
             public void click(int position, ImageView ivProgrammeImg) {
-                Log.d("==========>", programmeList.get(position).toString());
+                LogUtil.d(MainActivity.class, "adapter.click", programmeList.get(position).toString());
                 if (programmeList.get(position).getEnclosureUrl() == null || programmeList.get(position).getEnclosureUrl().equals("") || programmeList.get(position).getEnclosureUrl().equals("null")) {
                     Uri uri = Uri.parse(programmeList.get(position).getLink());
                     startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 } else {
                     Intent intent = new Intent(getBaseContext(), DetailActivity.class);
-                    intent.putExtra("programme", programmeList.get(position));
+                    intent.putExtra(PROGRAMME, programmeList.get(position));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, Pair.create((View) ivProgrammeImg, "programmeImg"));
                         startActivityForResult(intent, DETAIL_REQUEST_CODE, option.toBundle());
@@ -111,9 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         programmeList.addAll(scienceTalkShow.getProgrammes());
         adapter.notifyDataSetChanged();
 
-        Log.d("---->", "===========================");
-        Log.d("---->", scienceTalkShow.toString());
-        Log.d("---->", "===========================");
+        LogUtil.d(MainActivity.class, "receiveScienceTalkShow", scienceTalkShow.toString());
     }
 
     @Override

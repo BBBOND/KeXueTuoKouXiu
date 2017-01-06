@@ -11,17 +11,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.kim.kexuetuokouxiu.R;
@@ -30,8 +24,8 @@ import com.kim.kexuetuokouxiu.app.contract.DetailContract;
 import com.kim.kexuetuokouxiu.app.presenter.DetailPresenterImpl;
 import com.kim.kexuetuokouxiu.bean.Comment;
 import com.kim.kexuetuokouxiu.bean.Programme;
+import com.kim.kexuetuokouxiu.utils.LogUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.kim.kexuetuokouxiu.app.activity.MainActivity.DETAIL_REQUEST_CODE;
@@ -68,8 +62,9 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
         Intent intent = getIntent();
         if (intent == null)
             finish();
-        programme = intent.getParcelableExtra("programme");
-        Log.d("---->", programme.toString());
+        programme = intent.getParcelableExtra(MainActivity.PROGRAMME);
+        if (programme != null)
+            LogUtil.d(DetailActivity.class, "initData", programme.toString());
     }
 
     private void initView() {
