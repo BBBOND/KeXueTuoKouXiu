@@ -20,8 +20,17 @@ public class LogUtil {
             else if (logContent instanceof List) {
                 for (Object obj : (List) logContent)
                     Log.d(clas.getSimpleName(), methodName + "------>" + obj.toString());
-            }
+            } else
+                Log.d(clas.getSimpleName(), methodName + "------>" + String.valueOf(logContent));
             Log.d(clas.getSimpleName(), methodName + "===========================");
+        }
+    }
+
+    public static void e(Class clas, String methodName, String errMsg) {
+        if (BuildConfig.DEBUG) {
+            Log.e(clas.getSimpleName(), methodName + "===========================");
+            Log.e(clas.getSimpleName(), methodName + "------>" + errMsg);
+            Log.e(clas.getSimpleName(), methodName + "===========================");
         }
     }
 }

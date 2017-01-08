@@ -1,0 +1,8 @@
+@startuml
+PlaybackManager -> MediaSessionCallback : 接受回调
+PlaybackManager -> PlaybackManager.PlaybackServiceCallback : Manager的Service回调
+PlaybackManager -> QueueManager : 存放可播放的音频以及当前播放的pos
+PlaybackManager -> PlaybackI : 音频播放相关接口
+QueueManager -> ProgrammeProvider:
+ProgrammeProvider -> ProgrammeProviderSourceI
+@enduml

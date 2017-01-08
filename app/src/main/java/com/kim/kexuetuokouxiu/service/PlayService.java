@@ -2,14 +2,18 @@ package com.kim.kexuetuokouxiu.service;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaBrowserServiceCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.kim.kexuetuokouxiu.helper.LogHelper;
+import com.kim.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.List;
 
@@ -21,8 +25,6 @@ public class PlayService extends MediaBrowserServiceCompat implements
         MediaPlayer.OnCompletionListener,
         MediaPlayer.OnBufferingUpdateListener,
         MediaPlayer.OnPreparedListener {
-
-    private static final String TAG = LogHelper.makeLogTag(PlayService.class);
 
     // 连接的设备名
     public static final String EXTRA_CONNECTED_CAST = "com.kim.kexuetuokouxiu.CAST_NAME";
@@ -37,11 +39,21 @@ public class PlayService extends MediaBrowserServiceCompat implements
     // stopSelf的延迟
     private static final int STOP_DELAY = 30000;
 
+    public static final String PLAYSERVICE_TAG = "com.kim.kexuetuokouxiu.PlayService";
+
     private MediaPlayer mediaPlayer;
+
+    private MediaSessionCompat mSession;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mSession = new MediaSessionCompat(this, PLAYSERVICE_TAG);
+        setSessionToken(mSession.getSessionToken());
+        mSession.setCallback();
+        mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnBufferingUpdateListener(this);
@@ -92,4 +104,5 @@ public class PlayService extends MediaBrowserServiceCompat implements
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
     }
+
 }
