@@ -1,0 +1,31 @@
+@startuml
+
+class MainActivity
+class DB
+class Remote
+class DetailActivity
+class QueueManager
+
+MainActivity -> DB : 请求数据
+DB -> Remote : 没有本地数据\n请求服务器
+Remote ..> DB : 返回数据并保存
+DB ..> MainActivity : 返回请求数据
+
+MainActivity --> DetailActivity : startActivity()
+
+DetailActivity -> PlayService : startPlayService()
+
+PlayService --> PlaybackManager : onCreate()
+PlayService --> MediaSessionCompat : onCreate()
+PlayService --> NotificationManager : onCreate()
+PlayService --> BroadCastReceiver : onCreate()
+PlayService --> QueueManager : onCreate()
+
+QueueManager --> DB : requestMediaList()
+DB ..> QueueManager : 返回列表\n,定位当前播放位置
+
+
+
+
+
+@enduml

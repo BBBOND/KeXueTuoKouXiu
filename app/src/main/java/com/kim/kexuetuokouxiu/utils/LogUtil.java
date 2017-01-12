@@ -33,4 +33,12 @@ public class LogUtil {
             Log.e(clas.getSimpleName(), methodName + "===========================");
         }
     }
+
+    public static void w(Class clas, String methodName, String warningMsg) {
+        if (BuildConfig.DEBUG) {
+            Log.w(clas.getSimpleName(), methodName + "===========================");
+            Log.w(clas.getSimpleName(), methodName + "------>" + warningMsg);
+            Log.w(clas.getSimpleName(), methodName + "===========================");
+        }
+    }
 }
