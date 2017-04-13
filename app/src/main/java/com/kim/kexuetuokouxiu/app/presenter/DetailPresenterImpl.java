@@ -17,6 +17,9 @@ import java.util.List;
 
 public class DetailPresenterImpl implements DetailContract.Presenter {
 
+    public static final String EXTRA_CURRENT_MEDIA_DESCRIPTION =
+            "com.kim.kexuetuokouxiu.CURRENT_MEDIA_DESCRIPTION";
+
     private DetailContract.View view;
     private Player player;
     private DetailContract.Model model;

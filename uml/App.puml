@@ -24,8 +24,4 @@ PlayService --> QueueManager : onCreate()
 QueueManager --> DB : requestMediaList()
 DB ..> QueueManager : 返回列表\n,定位当前播放位置
 
-
-
-
-
 @enduml

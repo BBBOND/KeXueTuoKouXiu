@@ -1,10 +1,12 @@
 package com.kim.kexuetuokouxiu.app.activity;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +34,8 @@ import static com.kim.kexuetuokouxiu.app.activity.MainActivity.DETAIL_REQUEST_CO
 
 public class DetailActivity extends AppCompatActivity implements DetailContract.View {
 
+    private static final String SAVED_MEDIA_ID="com.kim.kexuetuokouxiu.MEDIA_ID";
+
     private TextView tvSubTitle;
     private Programme programme;
     private FloatingActionButton fabPlay;
@@ -43,6 +47,8 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
     private RecyclerView rvComments;
 
     private boolean isShowAll = false;
+
+    private Bundle mVoiceSearchParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,19 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
         initData();
         initView();
         initEvent();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        String mediaId = getMediaId();
+        if (mediaId != null) {
+            outState.putString(SAVED_MEDIA_ID, mediaId);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    private String getMediaId() {
+        return null;
     }
 
     private void initData() {

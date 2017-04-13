@@ -12,6 +12,8 @@ import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import com.kim.kexuetuokouxiu.app.model.ProgrammeProvider;
+import com.kim.kexuetuokouxiu.app.palyback.PlaybackManager;
 import com.kim.kexuetuokouxiu.helper.LogHelper;
 import com.kim.kexuetuokouxiu.utils.LogUtil;
 
@@ -25,6 +27,11 @@ public class PlayService extends MediaBrowserServiceCompat implements
         MediaPlayer.OnCompletionListener,
         MediaPlayer.OnBufferingUpdateListener,
         MediaPlayer.OnPreparedListener {
+
+    private ProgrammeProvider mpProgrammeProvider;
+    private PlaybackManager mPlaybackManager;
+    private MediaSessionCompat mSession;
+
 
     // 连接的设备名
     public static final String EXTRA_CONNECTED_CAST = "com.kim.kexuetuokouxiu.CAST_NAME";
@@ -42,8 +49,6 @@ public class PlayService extends MediaBrowserServiceCompat implements
     public static final String PLAYSERVICE_TAG = "com.kim.kexuetuokouxiu.PlayService";
 
     private MediaPlayer mediaPlayer;
-
-    private MediaSessionCompat mSession;
 
     @Override
     public void onCreate() {

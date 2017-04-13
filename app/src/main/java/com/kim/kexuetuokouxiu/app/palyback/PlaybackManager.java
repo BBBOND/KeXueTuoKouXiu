@@ -148,11 +148,6 @@ public class PlaybackManager implements Playback.Callback {
         updatePlaybackState(error);
     }
 
-    @Override
-    public void setCurrentMediaId(String mediaId) {
-        mQueueManager.setQueueFromMusic(mediaId);
-    }
-
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
