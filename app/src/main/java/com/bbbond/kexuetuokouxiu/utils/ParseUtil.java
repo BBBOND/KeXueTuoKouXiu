@@ -16,23 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.realm.RealmList;
-
 /**
  * 解析工具
  * Created by Weya on 2016/11/10.
  */
 
 public class ParseUtil {
-
-    public static ScienceTalkShow parseXml2ScienceTalkShowWithProgrammes(String xml) {
-        ScienceTalkShow scienceTalkShow = parseXml2ScienceTalkShow(xml);
-        if (scienceTalkShow == null)
-            return null;
-        else
-            scienceTalkShow.setProgrammes(parseXml2ProgrammeList(xml));
-        return scienceTalkShow;
-    }
 
     public static ScienceTalkShow parseXml2ScienceTalkShow(String xml) {
         ScienceTalkShow scienceTalkShow = null;
@@ -91,8 +80,8 @@ public class ParseUtil {
         return scienceTalkShow;
     }
 
-    public static RealmList<Programme> parseXml2ProgrammeList(String xml) {
-        RealmList<Programme> programmeList = null;
+    public static List<Programme> parseXml2ProgrammeList(String xml) {
+        List<Programme> programmeList = null;
         Programme programme = null;
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance(
@@ -107,7 +96,7 @@ public class ParseUtil {
                 String nodeName = parser.getName();
                 switch (eventType) {
                     case XmlPullParser.START_DOCUMENT:
-                        programmeList = new RealmList<Programme>();
+                        programmeList = new ArrayList<>();
                         break;
                     case XmlPullParser.START_TAG:
                         programme = formatProgramme(programme, parser, nodeName);

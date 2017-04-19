@@ -20,10 +20,10 @@ import com.bbbond.kexuetuokouxiu.app.adapter.ProgrammeAdapter;
 import com.bbbond.kexuetuokouxiu.app.contract.MainContract;
 import com.bbbond.kexuetuokouxiu.app.presenter.MainPresenterImpl;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
-import com.bbbond.kexuetuokouxiu.bean.ScienceTalkShow;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View, SwipeRefreshLayout.OnRefreshListener {
 
@@ -42,11 +42,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initView();
-
         presenter = new MainPresenterImpl(this);
-        presenter.getScienceTalkShowFromLocal();
+        initView();
+        presenter.getProgrammeListFromLocalFirst();
     }
 
     private void initView() {
@@ -102,16 +100,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onRefresh() {
         if (presenter == null)
             presenter = new MainPresenterImpl(this);
-        presenter.getScienceTalkShowFromRemote();
+        presenter.getProgrammeListFromRemote();
     }
 
     @Override
-    public void receiveScienceTalkShow(ScienceTalkShow scienceTalkShow) {
+    public void receiveProgrammeList(List<Programme> programmes) {
         programmeList.clear();
-        programmeList.addAll(scienceTalkShow.getProgrammes());
+        programmeList.addAll(programmes);
         adapter.notifyDataSetChanged();
-
-        LogUtil.d(MainActivity.class, "receiveScienceTalkShow", scienceTalkShow.toString());
     }
 
     @Override
