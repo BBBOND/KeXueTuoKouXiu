@@ -30,7 +30,6 @@ public class App extends Application {
         Logger.setDebug(true);
         Logger.setTag("NoHttp");
         Realm.init(this);
-//        SimplePlayer.getInstance()
         LogHelper.init(BuildConfig.DEBUG);
     }
 }
