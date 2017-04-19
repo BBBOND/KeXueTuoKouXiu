@@ -26,8 +26,6 @@ public class ScienceTalkShow extends RealmObject implements Serializable {
     private String copyright; // 版权
     private String lastBuildDate; // 上次更新时间
 
-    private RealmList<Programme> programmes = new RealmList<>();
-
     public String getTitle() {
         return title;
     }
@@ -116,12 +114,20 @@ public class ScienceTalkShow extends RealmObject implements Serializable {
         this.lastBuildDate = lastBuildDate;
     }
 
-    public RealmList<Programme> getProgrammes() {
-        return programmes;
+    @Override
+    public String toString() {
+        return "ScienceTalkShow{" +
+                "title='" + title + '\'' +
+                ", subtitle='" + subtitle + '\'' +
+                ", link='" + link + '\'' +
+                ", image='" + image + '\'' +
+                ", language='" + language + '\'' +
+                ", description='" + description + '\'' +
+                ", summary='" + summary + '\'' +
+                ", authorName='" + authorName + '\'' +
+                ", authorEmail='" + authorEmail + '\'' +
+                ", copyright='" + copyright + '\'' +
+                ", lastBuildDate='" + lastBuildDate + '\'' +
+                '}';
     }
-
-    public void setProgrammes(RealmList<Programme> programmes) {
-        this.programmes = programmes;
-    }
-
 }

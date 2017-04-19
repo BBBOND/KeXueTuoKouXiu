@@ -1,36 +1,58 @@
 package com.bbbond.kexuetuokouxiu.app.model;
 
 import com.bbbond.kexuetuokouxiu.app.contract.MainContract;
+import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.bean.ScienceTalkShow;
+import com.bbbond.kexuetuokouxiu.db.ProgrammeDao;
 import com.bbbond.kexuetuokouxiu.db.ScienceTalkShowDao;
 import com.bbbond.kexuetuokouxiu.network.RemoteClient;
+import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 import com.bbbond.kexuetuokouxiu.utils.ParseUtil;
-import com.yolanda.nohttp.rest.OnResponseListener;
+import com.google.gson.Gson;
 import com.yolanda.nohttp.rest.Response;
+import com.yolanda.nohttp.rest.SimpleResponseListener;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * 数据获取
  * Created by Weya on 2016/12/03
  */
 
 public class MainModelImpl implements MainContract.Model {
 
-    public static final int FROM_REMOTE = 1;
-    public static final int FROM_LOCAL = 2;
+    /**
+     * 从官网获取ScienceTalkShow
+     * @param callback
+     */
+    private void getScienceTalkShowFromRemote(final ScienceTalkShowCallback callback) {
+        RemoteClient.getScienceTalkShow(new SimpleResponseListener<String>() {
+            @Override
+            public void onSucceed(int what, Response<String> response) {
+                String xml = response.get();
+                ScienceTalkShow scienceTalkShow = ParseUtil.parseXml2ScienceTalkShow(xml);
+                callback.onSucceed(scienceTalkShow);
+                ScienceTalkShowDao.saveOrUpdate(scienceTalkShow);
+                LogUtil.d(MainModelImpl.class, "ScienceTalkShow", "从官网获取");
+            }
 
-    @Override
-    public void getScienceTalkShow(final Callback callback, int from) {
-        switch (from) {
-            case FROM_REMOTE:
-                getScienceTalkShowFromRemote(callback);
-                break;
-            case FROM_LOCAL:
-                getScienceTalkShowFromLocal(callback);
-                break;
-        }
+            @Override
+            public void onFailed(int what, Response<String> response) {
+                callback.onFailed();
+            }
+        });
     }
 
-    private void getScienceTalkShowFromRemote(final Callback callback) {
-        RemoteClient.getScienceTalkShow(new OnResponseListener<String>() {
+    /**
+     * 从服务器获取ScienceTalkShow
+     * @param callback
+     */
+    @Override
+    public void getScienceTalkShowFromJsonRemote(final ScienceTalkShowCallback callback) {
+        RemoteClient.getScienceTalkShowFromJson(new SimpleResponseListener<String>() {
             @Override
             public void onStart(int what) {
                 callback.onStart();
@@ -38,45 +60,127 @@ public class MainModelImpl implements MainContract.Model {
 
             @Override
             public void onSucceed(int what, Response<String> response) {
-                String xml = response.get();
-                ScienceTalkShow scienceTalkShow = ParseUtil.parseXml2ScienceTalkShowWithProgrammes(xml);
+                Gson gson = new Gson();
+                ScienceTalkShow scienceTalkShow = gson.fromJson(response.get(), ScienceTalkShow.class);
                 callback.onSucceed(scienceTalkShow);
                 ScienceTalkShowDao.saveOrUpdate(scienceTalkShow);
+                LogUtil.d(MainModelImpl.class, "ScienceTalkShow", "从服务器获取");
+            }
+
+            @Override
+            public void onFailed(int what, Response<String> response) {
+                getScienceTalkShowFromRemote(callback);
+            }
+        });
+    }
+
+    /**
+     * 从本地获取ScienceTalkShow
+     * @param callback
+     */
+    @Override
+    public void getScienceTalkShowFromLocal(final ScienceTalkShowCallback callback) {
+        callback.onStart();
+        try {
+            ScienceTalkShow scienceTalkShow = ScienceTalkShowDao.getScienceTalkShow();
+            callback.onSucceed(scienceTalkShow);
+            LogUtil.d(MainModelImpl.class, "ScienceTalkShow", "从本地获取");
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onFailed();
+        }
+    }
+
+    /**
+     * 从本地获取ProgrammeList
+     * @param callback
+     */
+    @Override
+    public void getProgrammeListFromLocal(ProgrammeListCallback callback) {
+        callback.onStart();
+        try {
+            List<Programme> programmes = ProgrammeDao.getScienceTalkShow();
+            callback.onSucceed(programmes);
+            LogUtil.d(MainModelImpl.class, "ProgrammeList", "从本地获取");
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onFailed();
+        }
+    }
+
+    /**
+     * 从服务器获取ProgrammeList
+     * @param callback
+     */
+    @Override
+    public void getProgrammeListFromJsonRemote(final ProgrammeListCallback callback) {
+        RemoteClient.getProgrammesFromJson(new SimpleResponseListener<JSONArray>() {
+            @Override
+            public void onStart(int what) {
+                callback.onStart();
+            }
+
+            @Override
+            public void onSucceed(int what, Response<JSONArray> response) {
+                List<Programme> programmes = new ArrayList<>();
+                JSONArray jsonArray = response.get();
+                Gson gson = new Gson();
+                int length = jsonArray.length();
+                try {
+                    for (int i = 0; i < length; i++) {
+                        programmes.add(gson.fromJson(jsonArray.get(i).toString(), Programme.class));
+                    }
+                } catch (Exception e) {
+                    programmes = null;
+                }
+                ProgrammeDao.saveOrUpdate(programmes);
+                callback.onSucceed(programmes);
+                LogUtil.d(MainModelImpl.class, "ProgrammeList", "从服务器获取");
+            }
+
+            @Override
+            public void onFailed(int what, Response<JSONArray> response) {
+                getProgrammeListFromRemote(callback);
+            }
+        });
+    }
+
+    /**
+     * 从官网获取ProgrammeList
+     * @param callback
+     */
+    private void getProgrammeListFromRemote(final ProgrammeListCallback callback) {
+        RemoteClient.getScienceTalkShow(new SimpleResponseListener<String>() {
+            @Override
+            public void onSucceed(int what, Response<String> response) {
+                List<Programme> programmes = ParseUtil.parseXml2ProgrammeList(response.get());
+                ProgrammeDao.saveOrUpdate(programmes);
+                callback.onSucceed(programmes);
+                LogUtil.d(MainModelImpl.class, "ProgrammeList", "从官网获取");
             }
 
             @Override
             public void onFailed(int what, Response<String> response) {
                 callback.onFailed();
             }
-
-            @Override
-            public void onFinish(int what) {
-                callback.onFinish();
-            }
         });
     }
 
-    private void getScienceTalkShowFromLocal(final Callback callback) {
-        callback.onStart();
-        try {
-            ScienceTalkShow scienceTalkShow = ScienceTalkShowDao.getScienceTalkShow();
-            callback.onSucceed(scienceTalkShow);
-        } catch (Exception e) {
-            e.printStackTrace();
-            callback.onFailed();
-        } finally {
-            callback.onFinish();
-        }
-    }
-
-    public interface Callback {
+    public interface ScienceTalkShowCallback {
 
         void onStart();
 
         void onSucceed(ScienceTalkShow scienceTalkShow);
 
         void onFailed();
+    }
 
-        void onFinish();
+    public interface ProgrammeListCallback {
+
+        void onStart();
+
+        void onSucceed(List<Programme> programmes);
+
+        void onFailed();
     }
 }
