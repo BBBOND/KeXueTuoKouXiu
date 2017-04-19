@@ -8,24 +8,23 @@ import java.util.UUID;
 import io.realm.RealmObject;
 
 /**
+ * 节目
  * Created by Weya on 2016/11/10.
  */
-
 public class Programme extends RealmObject implements Parcelable {
 
-    private String id = UUID.randomUUID().toString();
-    private String title;
-    private String link;
-    private String commentsUrl;
-    private String pubDate;
-    private String dcCreator;
-    private String category;
-    private String description;
-    private String contentEncoded;
-    private String wfwCommentRss;
-    private String slashComments;
-    private String enclosureUrl;
-    private String duration;
+    private String id; // 节目唯一标示，url的md5
+    private String title; // 节目标题
+    private String link; // 节目链接
+    private String pubDate; // 节目发布时间
+    private String creator; // 节目创建者
+    private String category; // 节目类别
+    private String description; // 节目描述
+    private String summary; // 节目说明
+    private String commentRss; // 评论RSS
+    private String comments; // 评论数
+    private String duration; // 节目长度
+    private String mediaUrl; // 节目音频链接
     private boolean listened = false;
 
     public Programme() {
@@ -35,16 +34,15 @@ public class Programme extends RealmObject implements Parcelable {
         id = in.readString();
         title = in.readString();
         link = in.readString();
-        commentsUrl = in.readString();
         pubDate = in.readString();
-        dcCreator = in.readString();
+        creator = in.readString();
         category = in.readString();
         description = in.readString();
-        contentEncoded = in.readString();
-        wfwCommentRss = in.readString();
-        slashComments = in.readString();
-        enclosureUrl = in.readString();
+        summary = in.readString();
+        commentRss = in.readString();
+        comments = in.readString();
         duration = in.readString();
+        mediaUrl = in.readString();
         listened = in.readByte() != 0;
     }
 
@@ -64,6 +62,10 @@ public class Programme extends RealmObject implements Parcelable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -80,14 +82,6 @@ public class Programme extends RealmObject implements Parcelable {
         this.link = link;
     }
 
-    public String getCommentsUrl() {
-        return commentsUrl;
-    }
-
-    public void setCommentsUrl(String commentsUrl) {
-        this.commentsUrl = commentsUrl;
-    }
-
     public String getPubDate() {
         return pubDate;
     }
@@ -96,12 +90,12 @@ public class Programme extends RealmObject implements Parcelable {
         this.pubDate = pubDate;
     }
 
-    public String getDcCreator() {
-        return dcCreator;
+    public String getCreator() {
+        return creator;
     }
 
-    public void setDcCreator(String dcCreator) {
-        this.dcCreator = dcCreator;
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getCategory() {
@@ -120,36 +114,28 @@ public class Programme extends RealmObject implements Parcelable {
         this.description = description;
     }
 
-    public String getContentEncoded() {
-        return contentEncoded;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setContentEncoded(String contentEncoded) {
-        this.contentEncoded = contentEncoded;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
-    public String getWfwCommentRss() {
-        return wfwCommentRss;
+    public String getCommentRss() {
+        return commentRss;
     }
 
-    public void setWfwCommentRss(String wfwCommentRss) {
-        this.wfwCommentRss = wfwCommentRss;
+    public void setCommentRss(String commentRss) {
+        this.commentRss = commentRss;
     }
 
-    public String getSlashComments() {
-        return slashComments;
+    public String getComments() {
+        return comments;
     }
 
-    public void setSlashComments(String slashComments) {
-        this.slashComments = slashComments;
-    }
-
-    public String getEnclosureUrl() {
-        return enclosureUrl;
-    }
-
-    public void setEnclosureUrl(String enclosureUrl) {
-        this.enclosureUrl = enclosureUrl;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getDuration() {
@@ -158,6 +144,14 @@ public class Programme extends RealmObject implements Parcelable {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
     }
 
     public boolean isListened() {
@@ -169,21 +163,35 @@ public class Programme extends RealmObject implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Programme programme = (Programme) o;
+
+        return id != null ? id.equals(programme.id) : programme.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         return "Programme{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", link='" + link + '\'' +
-                ", commentsUrl='" + commentsUrl + '\'' +
                 ", pubDate='" + pubDate + '\'' +
-                ", dcCreator='" + dcCreator + '\'' +
+                ", creator='" + creator + '\'' +
                 ", category='" + category + '\'' +
                 ", description='" + description + '\'' +
-                ", contentEncoded='" + contentEncoded + '\'' +
-                ", wfwCommentRss='" + wfwCommentRss + '\'' +
-                ", slashComments='" + slashComments + '\'' +
-                ", enclosureUrl='" + enclosureUrl + '\'' +
+                ", summary='" + summary + '\'' +
+                ", commentRss='" + commentRss + '\'' +
+                ", comments='" + comments + '\'' +
                 ", duration='" + duration + '\'' +
+                ", mediaUrl='" + mediaUrl + '\'' +
                 ", listened=" + listened +
                 '}';
     }
@@ -194,20 +202,20 @@ public class Programme extends RealmObject implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(id);
         parcel.writeString(title);
         parcel.writeString(link);
-        parcel.writeString(commentsUrl);
         parcel.writeString(pubDate);
-        parcel.writeString(dcCreator);
+        parcel.writeString(creator);
         parcel.writeString(category);
         parcel.writeString(description);
-        parcel.writeString(contentEncoded);
-        parcel.writeString(wfwCommentRss);
-        parcel.writeString(slashComments);
-        parcel.writeString(enclosureUrl);
+        parcel.writeString(summary);
+        parcel.writeString(commentRss);
+        parcel.writeString(comments);
         parcel.writeString(duration);
+        parcel.writeString(mediaUrl);
         parcel.writeByte((byte) (listened ? 1 : 0));
     }
+
 }

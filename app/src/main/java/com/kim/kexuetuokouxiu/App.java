@@ -2,6 +2,7 @@ package com.kim.kexuetuokouxiu;
 
 import android.app.Application;
 
+import com.bbbond.simpleplayer.helper.LogHelper;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.yolanda.nohttp.URLConnectionNetworkExecutor;
@@ -29,5 +30,7 @@ public class App extends Application {
         Logger.setDebug(true);
         Logger.setTag("NoHttp");
         Realm.init(this);
+//        SimplePlayer.getInstance()
+        LogHelper.init(BuildConfig.DEBUG);
     }
 }

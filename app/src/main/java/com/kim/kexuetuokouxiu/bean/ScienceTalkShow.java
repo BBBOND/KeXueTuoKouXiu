@@ -2,28 +2,31 @@ package com.kim.kexuetuokouxiu.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by Weya on 2016/11/10.
+ * 科学脱口秀
+ * Created by bbbond on 2017/4/16.
  */
 
 public class ScienceTalkShow extends RealmObject implements Serializable {
 
     @PrimaryKey
-    private String title;
-    private String link;
-    private String description;
-    private String lastBuildDate;
-    private String language;
-    private String itunes_summary;
-    private String itunes_author;
-    private String image;
-    private String copyright;
-    private String itunes_subtitle;
+    private String title; // 节目名
+    private String subtitle; // 节目副标题
+    private String link; // 节目主页
+    private String image; // 节目图
+    private String language; // 节目语言
+    private String description; // 节目描述
+    private String summary; // 节目说明
+    private String authorName; // 作者名
+    private String authorEmail; // 作者邮箱
+    private String copyright; // 版权
+    private String lastBuildDate; // 上次更新时间
 
     private RealmList<Programme> programmes = new RealmList<>();
 
@@ -35,52 +38,20 @@ public class ScienceTalkShow extends RealmObject implements Serializable {
         this.title = title;
     }
 
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
+
     public String getLink() {
         return link;
     }
 
     public void setLink(String link) {
         this.link = link;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLastBuildDate() {
-        return lastBuildDate;
-    }
-
-    public void setLastBuildDate(String lastBuildDate) {
-        this.lastBuildDate = lastBuildDate;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getItunes_summary() {
-        return itunes_summary;
-    }
-
-    public void setItunes_summary(String itunes_summary) {
-        this.itunes_summary = itunes_summary;
-    }
-
-    public String getItunes_author() {
-        return itunes_author;
-    }
-
-    public void setItunes_author(String itunes_author) {
-        this.itunes_author = itunes_author;
     }
 
     public String getImage() {
@@ -91,6 +62,46 @@ public class ScienceTalkShow extends RealmObject implements Serializable {
         this.image = image;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
+
+    public void setAuthorEmail(String authorEmail) {
+        this.authorEmail = authorEmail;
+    }
+
     public String getCopyright() {
         return copyright;
     }
@@ -99,38 +110,20 @@ public class ScienceTalkShow extends RealmObject implements Serializable {
         this.copyright = copyright;
     }
 
-    public String getItunes_subtitle() {
-        return itunes_subtitle;
+    public String getLastBuildDate() {
+        return lastBuildDate;
     }
 
-    public void setItunes_subtitle(String itunes_subtitle) {
-        this.itunes_subtitle = itunes_subtitle;
+    public void setLastBuildDate(String lastBuildDate) {
+        this.lastBuildDate = lastBuildDate;
     }
 
     public RealmList<Programme> getProgrammes() {
         return programmes;
     }
 
-    public void addProgramme(Programme programme) {
-        if (programmes == null)
-            programmes = new RealmList<>();
-        programmes.add(programme);
+    public void setProgrammes(RealmList<Programme> programmes) {
+        this.programmes = programmes;
     }
 
-    @Override
-    public String toString() {
-        return "ScienceTalkShow{" +
-                "title='" + title + '\'' +
-                ", link='" + link + '\'' +
-                ", description='" + description + '\'' +
-                ", lastBuildDate='" + lastBuildDate + '\'' +
-                ", language='" + language + '\'' +
-                ", itunes_summary='" + itunes_summary + '\'' +
-                ", itunes_author='" + itunes_author + '\'' +
-                ", image='" + image + '\'' +
-                ", copyright='" + copyright + '\'' +
-                ", itunes_subtitle='" + itunes_subtitle + '\'' +
-                ", programmes=" + programmes +
-                '}';
-    }
 }

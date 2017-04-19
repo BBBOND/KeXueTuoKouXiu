@@ -23,5 +23,4 @@ public class RemoteClient {
         Request<String> request = new StringRequest(url);
         queue.add(1, request, response);
     }
-
 }
