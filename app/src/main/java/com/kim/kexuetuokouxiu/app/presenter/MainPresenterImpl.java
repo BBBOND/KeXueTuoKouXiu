@@ -4,16 +4,15 @@ import com.kim.kexuetuokouxiu.app.activity.MainActivity;
 import com.kim.kexuetuokouxiu.app.contract.MainContract;
 import com.kim.kexuetuokouxiu.app.model.MainModelImpl;
 import com.kim.kexuetuokouxiu.bean.ScienceTalkShow;
-import com.kim.kexuetuokouxiu.network.RemoteClient;
-import com.kim.kexuetuokouxiu.utils.ParseUtil;
-import com.yolanda.nohttp.rest.OnResponseListener;
-import com.yolanda.nohttp.rest.Response;
+import com.kim.kexuetuokouxiu.helper.LogHelper;
 
 /**
  * Created by Weya on 2016/11/10.
  */
 
 public class MainPresenterImpl implements MainContract.Presenter {
+
+    private static final String TAG = MainPresenterImpl.class.getSimpleName();
 
     private MainContract.View view;
     private MainContract.Model model;
@@ -33,6 +32,7 @@ public class MainPresenterImpl implements MainContract.Presenter {
 
             @Override
             public void onSucceed(ScienceTalkShow scienceTalkShow) {
+                LogHelper.d(TAG, "from local ===> ", scienceTalkShow);
                 view.receiveScienceTalkShow(scienceTalkShow);
             }
 
@@ -58,6 +58,7 @@ public class MainPresenterImpl implements MainContract.Presenter {
 
             @Override
             public void onSucceed(ScienceTalkShow scienceTalkShow) {
+                LogHelper.d(TAG, "from remote ===> ", scienceTalkShow);
                 view.receiveScienceTalkShow(scienceTalkShow);
             }
 

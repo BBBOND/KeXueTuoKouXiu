@@ -46,7 +46,7 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.View
         final int pos = position;
         Programme programme = programmeList.get(position);
         holder.tvTitle.setText(programme.getTitle());
-        holder.tvCreator.setText(programme.getDcCreator());
+        holder.tvCreator.setText(programme.getCreator());
         SimpleDateFormat sdf = new SimpleDateFormat("MM月dd yyyy", Locale.CHINA);
         holder.tvPubDate.setText(sdf.format(new Date(programme.getPubDate())));
         holder.itemView.setTag(programme);

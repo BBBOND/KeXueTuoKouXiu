@@ -48,8 +48,6 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
 
     private boolean isShowAll = false;
 
-    private Bundle mVoiceSearchParams;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,12 +95,12 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
 
         setTitle(programme.getTitle());
         tvTitle.setText(programme.getTitle());
-        tvSubTitle.setText(Html.fromHtml(programme.getContentEncoded()));
-        tvCommentNum.setText(getResources().getString(R.string.comment_num, programme.getSlashComments()));
+        tvSubTitle.setText(Html.fromHtml(programme.getSummary()));
+        tvCommentNum.setText(getResources().getString(R.string.comment_num, programme.getComments()));
 //        tvSubTitle.setText(programme.toString());
         sbState.setOnSeekBarChangeListener(new SeekBarChangeEvent());
         sbState.setEnabled(false);
-        presenter.showComments(programme.getWfwCommentRss());
+        presenter.showComments(programme.getCommentRss());
     }
 
     private void initEvent() {
@@ -127,7 +125,7 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
                     if (presenter.isPlayed())
                         presenter.play();
                     else {
-                        presenter.playFirst(programme.getEnclosureUrl());
+                        presenter.playFirst(programme.getMediaUrl());
                     }
                 }
             }

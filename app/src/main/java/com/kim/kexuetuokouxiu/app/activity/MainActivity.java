@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public void click(int position, ImageView ivProgrammeImg) {
                 LogUtil.d(MainActivity.class, "adapter.click", programmeList.get(position).toString());
-                if (programmeList.get(position).getEnclosureUrl() == null || programmeList.get(position).getEnclosureUrl().equals("") || programmeList.get(position).getEnclosureUrl().equals("null")) {
+                if (programmeList.get(position).getDescription() == null || programmeList.get(position).getDescription().equals("") || programmeList.get(position).getDescription().equals("null")) {
                     Uri uri = Uri.parse(programmeList.get(position).getLink());
                     startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 } else {

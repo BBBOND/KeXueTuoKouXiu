@@ -3,8 +3,6 @@ package com.kim.kexuetuokouxiu.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.UUID;
-
 import io.realm.RealmObject;
 
 /**

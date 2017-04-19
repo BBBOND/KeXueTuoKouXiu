@@ -39,7 +39,7 @@ public class MainModelImpl implements MainContract.Model {
             @Override
             public void onSucceed(int what, Response<String> response) {
                 String xml = response.get();
-                ScienceTalkShow scienceTalkShow = ParseUtil.parseXml2ScienceTalkShow(xml);
+                ScienceTalkShow scienceTalkShow = ParseUtil.parseXml2ScienceTalkShowWithProgrammes(xml);
                 callback.onSucceed(scienceTalkShow);
                 ScienceTalkShowDao.saveOrUpdate(scienceTalkShow);
             }
