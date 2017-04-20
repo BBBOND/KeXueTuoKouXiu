@@ -28,6 +28,8 @@ public class MainContract {
         void getProgrammeListFromLocalFirst();
 
         void getProgrammeListFromRemote();
+
+        void loadNextPage();
     }
 
     public interface Model {

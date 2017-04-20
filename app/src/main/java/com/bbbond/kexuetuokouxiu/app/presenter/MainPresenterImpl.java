@@ -4,7 +4,9 @@ import com.bbbond.kexuetuokouxiu.app.activity.MainActivity;
 import com.bbbond.kexuetuokouxiu.app.contract.MainContract;
 import com.bbbond.kexuetuokouxiu.app.model.MainModelImpl;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
+import com.bbbond.kexuetuokouxiu.utils.PageUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +17,9 @@ public class MainPresenterImpl implements MainContract.Presenter {
 
     private MainContract.View view;
     private MainContract.Model model;
+
+    private List<Programme> programmeAllList;
+    private int pageIndex = 1;
 
     public MainPresenterImpl(MainActivity activity) {
         this.view = activity;
@@ -77,7 +82,9 @@ public class MainPresenterImpl implements MainContract.Presenter {
                 if (programmes == null || programmes.size() <= 0) {
                     getProgrammeListFromRemote();
                 } else {
-                    view.receiveProgrammeList(programmes);
+                    pageIndex = 1;
+                    programmeAllList = programmes;
+                    view.receiveProgrammeList(PageUtil.paging(programmeAllList, pageIndex));
                     view.hideRefreshProgress();
                 }
             }
@@ -99,7 +106,9 @@ public class MainPresenterImpl implements MainContract.Presenter {
 
             @Override
             public void onSucceed(List<Programme> programmes) {
-                view.receiveProgrammeList(programmes);
+                pageIndex = 1;
+                programmeAllList = programmes;
+                view.receiveProgrammeList(PageUtil.paging(programmeAllList, pageIndex));
                 view.hideRefreshProgress();
             }
 
@@ -109,5 +118,10 @@ public class MainPresenterImpl implements MainContract.Presenter {
                 getProgrammeListFromRemote();
             }
         });
+    }
+
+    @Override
+    public void loadNextPage() {
+        view.receiveProgrammeList(PageUtil.paging(programmeAllList, ++pageIndex));
     }
 }
