@@ -1,153 +1,106 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
-import android.app.ActivityOptions;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
-import android.view.View;
-import android.widget.ImageView;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.bbbond.kexuetuokouxiu.R;
-import com.bbbond.kexuetuokouxiu.app.adapter.ProgrammeAdapter;
-import com.bbbond.kexuetuokouxiu.app.contract.MainContract;
-import com.bbbond.kexuetuokouxiu.app.presenter.MainPresenterImpl;
-import com.bbbond.kexuetuokouxiu.bean.Programme;
-import com.bbbond.kexuetuokouxiu.utils.LogUtil;
+import com.bbbond.kexuetuokouxiu.app.fragment.DownloadFragment;
+import com.bbbond.kexuetuokouxiu.app.fragment.HomeFragment;
+import com.bbbond.kexuetuokouxiu.app.fragment.MeFragment;
+import com.bbbond.kexuetuokouxiu.utils.DensityUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-public class MainActivity extends AppCompatActivity implements MainContract.View, SwipeRefreshLayout.OnRefreshListener {
+    private BottomNavigationView navigationView;
+    private HomeFragment homeFragment;
+    private DownloadFragment downloadFragment;
+    private MeFragment meFragment;
 
-    private RecyclerView rvShowList;
-    private SwipeRefreshLayout srlRefresh;
-
-    private MainContract.Presenter presenter;
-
-    private ArrayList<Programme> programmeShowList;
-    private ProgrammeAdapter adapter;
-    private GridLayoutManager manager;
-
-    public static final int DETAIL_REQUEST_CODE = 1;
-    public static final String PROGRAMME = "programme";
+    private Fragment currentFragment;
+    private Fragment targetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        presenter = new MainPresenterImpl(this);
+
+        initFragments();
         initView();
-        presenter.getProgrammeListFromLocalFirst();
+        initEvent();
+    }
+
+    private void initFragments() {
+        homeFragment = new HomeFragment();
+        downloadFragment = new DownloadFragment();
+        meFragment = new MeFragment();
+        currentFragment = homeFragment;
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.add(R.id.content, currentFragment);
+        transaction.commit();
     }
 
     private void initView() {
-        rvShowList = (RecyclerView) findViewById(R.id.rvShowList);
-        srlRefresh = (SwipeRefreshLayout) findViewById(R.id.srlRefresh);
-        srlRefresh.setColorSchemeColors(Color.parseColor("#FCC21C"), Color.parseColor("#A4D226"), Color.parseColor("#F2765F"), Color.parseColor("#77D1D6"));
-        srlRefresh.setOnRefreshListener(this);
+        navigationView = (BottomNavigationView) findViewById(R.id.navigation);
 
-        programmeShowList = new ArrayList<>();
-        adapter = new ProgrammeAdapter(getBaseContext(), programmeShowList);
-        adapter.setListener(new ProgrammeAdapter.OnClickListener() {
-            @Override
-            public void click(int position, ImageView ivProgrammeImg) {
-                LogUtil.d(MainActivity.class, "adapter.click", programmeShowList.get(position).toString());
-                if (programmeShowList.get(position).getDescription() == null || programmeShowList.get(position).getDescription().equals("") || programmeShowList.get(position).getDescription().equals("null")) {
-                    Uri uri = Uri.parse(programmeShowList.get(position).getLink());
-                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                } else {
-                    Intent intent = new Intent(getBaseContext(), DetailActivity.class);
-                    intent.putExtra(PROGRAMME, programmeShowList.get(position));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, Pair.create((View) ivProgrammeImg, "programmeImg"));
-                        startActivityForResult(intent, DETAIL_REQUEST_CODE, option.toBundle());
-                    } else {
-                        startActivityForResult(intent, DETAIL_REQUEST_CODE);
-                    }
-                }
-            }
-        });
-        int spanCount;
+        int bottom = checkDeviceHasNavigationBar(this) ? 48 : 0;
+        navigationView.setPadding(0, 0, 0, DensityUtil.dip2px(this, bottom));
+    }
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            spanCount = 2;
+    private void initEvent() {
+        navigationView.setOnNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                if (currentFragment == homeFragment) return true;
+                if (homeFragment == null)
+                    homeFragment = new HomeFragment();
+                targetFragment = homeFragment;
+                break;
+            case R.id.nav_download:
+                if (currentFragment == downloadFragment) return true;
+                if (downloadFragment == null)
+                    downloadFragment = new DownloadFragment();
+                targetFragment = downloadFragment;
+                break;
+            case R.id.nav_me:
+                if (currentFragment == meFragment) return true;
+                if (meFragment == null)
+                    meFragment = new MeFragment();
+                targetFragment = meFragment;
+                break;
+            default:
+                if (currentFragment == homeFragment) return true;
+                if (homeFragment == null)
+                    homeFragment = new HomeFragment();
+                targetFragment = homeFragment;
+                break;
+        }
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        if (targetFragment.isAdded()) {
+            transaction.hide(currentFragment).show(targetFragment);
         } else {
-            spanCount = 3;
+            transaction.hide(currentFragment).add(R.id.content, targetFragment);
         }
-        manager = new GridLayoutManager(getBaseContext(), spanCount);
-        rvShowList.setLayoutManager(manager);
-
-        rvShowList.setAdapter(adapter);
-        rvShowList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                    int lastVisiblePosition = manager.findLastVisibleItemPosition();
-                    if(lastVisiblePosition >= manager.getItemCount() - 1){
-                        presenter.loadNextPage();
-                    }
-                }
-            }
-        });
-    }
-
-    @Override
-    public void showRefreshProgress() {
-        if (!srlRefresh.isRefreshing()) {
-            srlRefresh.setRefreshing(true);
-        }
-    }
-
-    @Override
-    public void hideRefreshProgress() {
-        if (srlRefresh.isRefreshing()) {
-            srlRefresh.setRefreshing(false);
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        if (presenter == null)
-            presenter = new MainPresenterImpl(this);
-        presenter.getProgrammeListFromRemote();
-    }
-
-    @Override
-    public void receiveProgrammeList(List<Programme> programmes) {
-        if (programmeShowList.size() == programmes.size()) {
-            Snackbar.make(rvShowList, "我是有底线的!", Snackbar.LENGTH_SHORT).show();
-        } else {
-            programmeShowList.clear();
-            programmeShowList.addAll(programmes);
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case DETAIL_REQUEST_CODE:
-                if (resultCode == RESULT_OK && data != null) {
-                    Programme programme = (Programme) data.getSerializableExtra("programme");
-                    int index = programmeShowList.indexOf(programme);
-                    if (index >= 0)
-                        rvShowList.scrollToPosition(index);
-                }
-        }
+        transaction.commit();
+        currentFragment = targetFragment;
+        return true;
     }
 }

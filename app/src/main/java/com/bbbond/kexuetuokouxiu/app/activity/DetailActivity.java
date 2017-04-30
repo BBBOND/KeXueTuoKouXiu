@@ -28,7 +28,7 @@ import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.List;
 
-import static com.bbbond.kexuetuokouxiu.app.activity.MainActivity.DETAIL_REQUEST_CODE;
+import static com.bbbond.kexuetuokouxiu.app.activity.Main1Activity.DETAIL_REQUEST_CODE;
 
 public class DetailActivity extends AppCompatActivity implements DetailContract.View {
 
@@ -77,7 +77,7 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
         Intent intent = getIntent();
         if (intent == null)
             finish();
-        programme = intent.getParcelableExtra(MainActivity.PROGRAMME);
+        programme = intent.getParcelableExtra(Main1Activity.PROGRAMME);
         if (programme != null)
             LogUtil.d(DetailActivity.class, "initData", programme.toString());
     }

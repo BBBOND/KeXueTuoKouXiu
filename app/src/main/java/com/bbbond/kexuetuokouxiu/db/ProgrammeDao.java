@@ -14,7 +14,7 @@ import io.realm.RealmResults;
 
 public class ProgrammeDao {
 
-    public static void saveOrUpdate(final List<Programme> programmes) {
+    public static void saveOrUpdateAsync(final List<Programme> programmes) {
         Realm.getDefaultInstance().executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -23,7 +23,16 @@ public class ProgrammeDao {
         });
     }
 
-    public static List<Programme> getScienceTalkShow() {
+    public static void saveOrUpdate(final List<Programme> programmes) {
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(programmes);
+            }
+        });
+    }
+
+    public static List<Programme> getAllProgrammeList() {
         final List<Programme> programmes = new ArrayList<>();
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
@@ -33,5 +42,17 @@ public class ProgrammeDao {
             }
         });
         return programmes;
+    }
+
+    public static List<Programme> getProgrammeListByCategories(final String[] category) {
+        final List<Programme> programmeList = new ArrayList<>();
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Programme> all = realm.where(Programme.class).in("category", category).findAll();
+                programmeList.addAll(all);
+            }
+        });
+        return programmeList;
     }
 }

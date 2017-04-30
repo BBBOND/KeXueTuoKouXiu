@@ -17,4 +17,8 @@ public class PageUtil {
             return allProgramme;
         return allProgramme.subList(0, page * PAGE_SIZE);
     }
+
+    public static boolean hasNext(List<Programme> allProgramme, int page) {
+        return page * PAGE_SIZE < allProgramme.size();
+    }
 }

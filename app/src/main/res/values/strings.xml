@@ -4,4 +4,19 @@
     <string name="creator">by %s</string>
     <string name="casting_to_device">Casting to %1$s</string>
     <string name="comment_num">共%s条</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="home">首页</string>
+    <string name="downloaded">已缓存</string>
+    <string name="about">关于</string>
+    <string name="search">搜索</string>
+
+    <string-array name="tabs">
+        <item>脱口秀</item>
+        <item>听众互动</item>
+        <item>科脱在别处</item>
+        <item>户外版</item>
+        <item>单口秀</item>
+        <item>其他</item>
+        <item>文章</item>
+    </string-array>
 </resources>
