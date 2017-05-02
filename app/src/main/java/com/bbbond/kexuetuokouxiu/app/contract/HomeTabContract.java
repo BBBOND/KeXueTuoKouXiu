@@ -1,9 +1,13 @@
 package com.bbbond.kexuetuokouxiu.app.contract;
 
+import android.content.Context;
+
 import com.bbbond.kexuetuokouxiu.app.model.HomeTabModel;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 
 import java.util.List;
+
+import rx.Observable;
 
 /**
  * Created by bbbond on 2017/4/30.
@@ -11,11 +15,13 @@ import java.util.List;
 
 public interface HomeTabContract {
     interface Model {
-        void getProgrammeListByCategories(HomeTabModel.ProgrammeListCallback callback, String[] category);
+        Observable<List<Programme>> getProgrammeListFromLocalByCategories(String[] category);
 
-        void getProgrammeListRemoteByCategories(HomeTabModel.ProgrammeListCallback callback, String[] category);
+        Observable<Void> saveProgrammeList(List<Programme> programmeList);
 
-        void fetchJsonRemote(HomeTabModel.ProgrammeListCallback callback);
+        Observable<List<Programme>> fetchRemoteFromJson();
+
+        Observable<List<Programme>> fetchRemoteFromXml();
     }
 
     interface View {
@@ -27,7 +33,7 @@ public interface HomeTabContract {
     }
 
     interface Presenter {
-        void getProgrammeList(String[] category);
+        void getProgrammeList(String[] category, boolean shouldFetchRemote);
 
         void getProgrammeListRemote(String[] category);
     }

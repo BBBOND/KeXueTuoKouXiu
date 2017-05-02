@@ -7,52 +7,46 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by bbbond on 2017/4/20.
  */
 
-public class ProgrammeDao {
+public class ProgrammeDao extends BaseDao {
 
-    public static void saveOrUpdateAsync(final List<Programme> programmes) {
-        Realm.getDefaultInstance().executeTransactionAsync(new Realm.Transaction() {
+    public static Observable<Void> saveOrUpdate(final List<Programme> programmes) {
+        return createObservable(new Func1<Realm, Void>() {
             @Override
-            public void execute(Realm realm) {
+            public Void call(Realm realm) {
                 realm.copyToRealmOrUpdate(programmes);
+                return null;
             }
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static void saveOrUpdate(final List<Programme> programmes) {
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+    public static Observable<List<Programme>> getAllProgrammeList() {
+        return createObservable(new Func1<Realm, List<Programme>>() {
             @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(programmes);
+            public List<Programme> call(Realm realm) {
+                return realm.where(Programme.class).findAll();
             }
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static List<Programme> getAllProgrammeList() {
-        final List<Programme> programmes = new ArrayList<>();
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+    public static Observable<List<Programme>> getProgrammeListByCategories(final String[] category) {
+        return createObservable(new Func1<Realm, List<Programme>>() {
             @Override
-            public void execute(Realm realm) {
-                RealmResults<Programme> all = realm.where(Programme.class).findAll();
-                programmes.addAll(all);
+            public List<Programme> call(Realm realm) {
+                return realm.where(Programme.class).in("category", category).findAll();
             }
-        });
-        return programmes;
-    }
-
-    public static List<Programme> getProgrammeListByCategories(final String[] category) {
-        final List<Programme> programmeList = new ArrayList<>();
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<Programme> all = realm.where(Programme.class).in("category", category).findAll();
-                programmeList.addAll(all);
-            }
-        });
-        return programmeList;
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }

@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.bbbond.kexuetuokouxiu.R;
+import com.bbbond.kexuetuokouxiu.app.adapter.ArticleAdapter;
 import com.bbbond.kexuetuokouxiu.app.adapter.ProgrammeAdapter;
 import com.bbbond.kexuetuokouxiu.app.contract.HomeTabContract;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
+import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +27,13 @@ import java.util.List;
  * Created by bbbond on 2017/4/27.
  */
 
-public class HomeTabFragment extends Fragment implements HomeTabContract.View, SwipeRefreshLayout.OnRefreshListener, View.OnScrollChangeListener {
+public class HomeTabFragment extends Fragment implements HomeTabContract.View, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TYPE_MEDIA = "media";
     public static final String TYPE_PAGE = "page";
     public static final String POS = "POS";
 
-    private final String[][] categories = {
+    private final String[][] categories = new String[][]{
             {"科学脱口秀", "未分类"},
             {"听众互动"},
             {"科脱在别处"},
@@ -77,14 +79,18 @@ public class HomeTabFragment extends Fragment implements HomeTabContract.View, S
     private void initEvent() {
         swipeRefreshLayout.setOnRefreshListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            recyclerView.setOnScrollChangeListener(this);
+            recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                }
+            });
         }
     }
 
     private void showContent() {
         if (programmeList != null && programmeList.size() > 0) {
-            swipeRefreshLayout.setVisibility(View.VISIBLE);
-            noDataLayout.setVisibility(View.GONE);
+            showNoData();
             GridLayoutManager manager = null;
             int spanCount;
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -100,6 +106,8 @@ public class HomeTabFragment extends Fragment implements HomeTabContract.View, S
                     break;
                 case TYPE_PAGE:
                     // TODO: 2017/4/28 文章风格
+                    manager = new GridLayoutManager(getActivity().getBaseContext(), 1);
+                    adapter = new ArticleAdapter(getActivity(), programmeList);
                     break;
                 default:
                     // TODO: 2017/4/28 默认音频风格
@@ -110,23 +118,29 @@ public class HomeTabFragment extends Fragment implements HomeTabContract.View, S
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(adapter);
         } else {
-            // TODO: 2017/4/28
-            swipeRefreshLayout.setVisibility(View.GONE);
-            noDataLayout.setVisibility(View.VISIBLE);
+            showNoData();
         }
+    }
+
+    private void showNoData() {
+        noDataLayout.setVisibility(programmeList != null && programmeList.size() > 0 ? View.GONE : View.VISIBLE);
     }
 
     private void initData() {
         tabPosition = getArguments().getInt(POS, 0);
         type = tabPosition == categories.length ? TYPE_PAGE : TYPE_MEDIA;
         if (presenter != null && programmeList.size() == 0)
-            presenter.getProgrammeList(categories[tabPosition]);
+            presenter.getProgrammeList(categories[tabPosition], true);
+        LogUtil.d(HomeTabFragment.class, "initData", categories[tabPosition][0]);
     }
 
     @Override
     public void onRefresh() {
-        if (presenter != null)
+        if (presenter != null) {
             presenter.getProgrammeListRemote(categories[tabPosition]);
+        }
+        LogUtil.d(HomeTabFragment.class, "onRefresh", "开始刷新");
+        LogUtil.d(HomeTabFragment.class, "onRefresh", categories[tabPosition][0]);
     }
 
     @Override
@@ -138,6 +152,7 @@ public class HomeTabFragment extends Fragment implements HomeTabContract.View, S
     public void refreshing(boolean isRefreshing) {
         if (swipeRefreshLayout != null)
             swipeRefreshLayout.setRefreshing(isRefreshing);
+        LogUtil.d(HomeTabFragment.class, "refreshing", isRefreshing ? "正在刷新" : "刷新结束");
     }
 
     @Override
@@ -147,12 +162,9 @@ public class HomeTabFragment extends Fragment implements HomeTabContract.View, S
             programmeList.clear();
             programmeList.addAll(programmes);
         }
+        showNoData();
         if (adapter != null)
             adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
+        LogUtil.d(HomeTabFragment.class, "receiveProgrammeList", programmes);
     }
 }

@@ -103,8 +103,8 @@ public class HomeModelImpl implements HomeContract.Model {
     public void getProgrammeListFromLocal(ProgrammeListCallback callback) {
         callback.onStart();
         try {
-            List<Programme> programmes = ProgrammeDao.getAllProgrammeList();
-            callback.onSucceed(programmes);
+//            List<Programme> programmes = ProgrammeDao.getAllProgrammeList();
+//            callback.onSucceed(programmes);
             LogUtil.d(HomeModelImpl.class, "ProgrammeList", "从本地获取");
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,8 +154,8 @@ public class HomeModelImpl implements HomeContract.Model {
     public void getProgrammeListFromRemoteByCategories(ProgrammeListCallback callback, String... category) {
         callback.onStart();
         try {
-            List<Programme> programmeList = ProgrammeDao.getProgrammeListByCategories(category);
-            callback.onSucceed(programmeList);
+//            List<Programme> programmeList = ProgrammeDao.getProgrammeListByCategories(category);
+//            callback.onSucceed(programmeList);
         } catch (Exception e) {
             LogUtil.e(HomeModelImpl.class, "getProgrammeListFromRemoteByCategories", e.getMessage());
             callback.onFailed();
@@ -171,14 +171,10 @@ public class HomeModelImpl implements HomeContract.Model {
         RemoteClient.getScienceTalkShow(new SimpleResponseListener<String>() {
             @Override
             public void onSucceed(int what, Response<String> response) {
-                ParseUtil.parseXml2ProgrammeList(response.get(), new ParseUtil.ParseProgrammeListener() {
-                    @Override
-                    public void onSuccess(List<Programme> programmeList) {
-                        ProgrammeDao.saveOrUpdate(programmeList);
-                        callback.onSucceed(programmeList);
-                        LogUtil.d(HomeModelImpl.class, "ProgrammeList", "从官网获取");
-                    }
-                });
+                List<Programme> programmeList = ParseUtil.parseXml2ProgrammeList(response.get());
+                ProgrammeDao.saveOrUpdate(programmeList);
+                callback.onSucceed(programmeList);
+                LogUtil.d(HomeModelImpl.class, "ProgrammeList", "从官网获取");
             }
 
             @Override

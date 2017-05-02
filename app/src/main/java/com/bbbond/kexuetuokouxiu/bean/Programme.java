@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * 节目
@@ -11,6 +12,7 @@ import io.realm.RealmObject;
  */
 public class Programme extends RealmObject implements Parcelable {
 
+    @PrimaryKey
     private String id; // 节目唯一标示，url的md5
     private String title; // 节目标题
     private String link; // 节目链接
