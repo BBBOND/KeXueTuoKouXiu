@@ -2,7 +2,13 @@ package com.bbbond.kexuetuokouxiu.app.activity;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import com.bbbond.kexuetuokouxiu.R;
 
 import java.lang.reflect.Method;
 
@@ -29,8 +35,14 @@ public class BaseActivity extends AppCompatActivity {
             } else if ("0".equals(navBarOverride)) {
                 hasNavigationBar = true;
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception ignore) {}
         return hasNavigationBar;
+    }
+
+    public void finishActivity() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            finishAfterTransition();
+        else
+            finish();
     }
 }

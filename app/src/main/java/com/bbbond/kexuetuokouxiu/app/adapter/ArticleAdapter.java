@@ -45,7 +45,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         final int pos = position;
         Programme programme = programmeList.get(pos);
         holder.tvTitle.setText(programme.getTitle());
-        holder.tvCategory.setText("#" + programme.getCategory());
+        holder.tvCategory.setText(context.getString(R.string.type, programme.getCategory()));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         holder.tvPubDate.setText(sdf.format(new Date(programme.getPubDate())));
         holder.tvContent.setText(programme.getSummary());

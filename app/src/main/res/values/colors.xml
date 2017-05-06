@@ -9,4 +9,9 @@
     <color name="mainColor_green">#A4D226</color>
     <color name="mainColor_red">#F2765F</color>
     <color name="mainColor_blue">#77D1D6</color>
+
+    <color name="main_text">#de000000</color>
+    <color name="sub_text">#8a000000</color>
+    <color name="accent_text">#4A90E2</color>
+
 </resources>

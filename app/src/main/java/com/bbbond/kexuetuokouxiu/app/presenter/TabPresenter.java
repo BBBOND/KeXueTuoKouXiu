@@ -1,10 +1,7 @@
 package com.bbbond.kexuetuokouxiu.app.presenter;
 
-import android.content.Context;
-import android.widget.Toast;
-
-import com.bbbond.kexuetuokouxiu.app.contract.HomeTabContract;
-import com.bbbond.kexuetuokouxiu.app.model.HomeTabModel;
+import com.bbbond.kexuetuokouxiu.app.contract.TabContract;
+import com.bbbond.kexuetuokouxiu.app.model.TabModel;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
@@ -16,16 +13,16 @@ import rx.Subscriber;
  * Created by bbbond on 2017/4/30.
  */
 
-public class HomeTabPresenter implements HomeTabContract.Presenter {
+public class TabPresenter implements TabContract.Presenter {
 
-    private HomeTabContract.View view;
-    private HomeTabContract.Model model;
+    private TabContract.View view;
+    private TabContract.Model model;
     private List<Programme> allCategoryProgrammeList;
     private List<Programme> allProgrammeList;
 
-    public HomeTabPresenter(HomeTabContract.View view) {
+    public TabPresenter(TabContract.View view) {
         this.view = view;
-        model = new HomeTabModel();
+        model = new TabModel();
         view.setPresenter(this);
     }
 
@@ -52,7 +49,7 @@ public class HomeTabPresenter implements HomeTabContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtil.e(HomeTabPresenter.class, "getProgrammeList", e.getMessage());
+                        LogUtil.e(TabPresenter.class, "getProgrammeList", e.getMessage());
                         view.refreshing(false);
                     }
 
@@ -86,7 +83,7 @@ public class HomeTabPresenter implements HomeTabContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtil.e(HomeTabPresenter.class, "getProgrammeListRemote", e.getMessage());
+                        LogUtil.e(TabPresenter.class, "getProgrammeListRemote", e.getMessage());
                         view.refreshing(false);
                         if (!this.isUnsubscribed())
                             this.unsubscribe();
@@ -119,7 +116,7 @@ public class HomeTabPresenter implements HomeTabContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtil.e(HomeTabPresenter.class, "getProgrammeListRemoteFromXml", e.getMessage());
+                        LogUtil.e(TabPresenter.class, "getProgrammeListRemoteFromXml", e.getMessage());
                         view.refreshing(false);
                         if (!this.isUnsubscribed())
                             this.unsubscribe();

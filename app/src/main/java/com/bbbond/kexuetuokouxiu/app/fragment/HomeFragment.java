@@ -11,11 +11,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.adapter.TabViewPagerAdapter;
-import com.bbbond.kexuetuokouxiu.app.presenter.HomeTabPresenter;
+import com.bbbond.kexuetuokouxiu.app.presenter.TabPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +25,19 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    public final String[][] categories = new String[][]{
+            {"科学脱口秀", "未分类"},
+            {"听众互动"},
+            {"科脱在别处"},
+            {"户外版"},
+            {"科学单口秀"},
+            {"午间版", "OX果壳问答", "节目花絮", "实录", "科学勾搭", "打赏互动"},
+            {"广告", "看板", "桌面下载", "科学逛吃会"},
+    };
+
     private TabLayout tabLayout;
     private Toolbar toolbar;
     private ViewPager viewPager;
-    private AppBarLayout appBar;
 
     private TabViewPagerAdapter adapter;
 
@@ -58,15 +66,21 @@ public class HomeFragment extends Fragment {
         if (fragmentList.size() == length) {
             return;
         }
-        HomeTabFragment fragment;
-        for (int i = 0; i < length; i++) {
-            fragment = new HomeTabFragment();
+        BaseTabFragment fragment;
+        for (int i = 0; i < length - 1; i++) {
+            fragment = new MediaTabFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt(HomeTabFragment.POS, i);
+            bundle.putStringArray(BaseTabFragment.CATEGORIES, categories[i]);
             fragment.setArguments(bundle);
+            new TabPresenter(fragment);
             fragmentList.add(fragment);
-            new HomeTabPresenter(fragment);
         }
+        fragment = new ArticleTabFragment();
+        Bundle bundle = new Bundle();
+        bundle.putStringArray(BaseTabFragment.CATEGORIES, categories[length - 1]);
+        fragment.setArguments(bundle);
+        new TabPresenter(fragment);
+        fragmentList.add(fragment);
     }
 
     private void initView(View view) {
@@ -75,7 +89,6 @@ public class HomeFragment extends Fragment {
         toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        appBar = (AppBarLayout) view.findViewById(R.id.appBar);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 

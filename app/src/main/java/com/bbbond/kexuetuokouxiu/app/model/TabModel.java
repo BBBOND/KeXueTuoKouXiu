@@ -1,6 +1,6 @@
 package com.bbbond.kexuetuokouxiu.app.model;
 
-import com.bbbond.kexuetuokouxiu.app.contract.HomeTabContract;
+import com.bbbond.kexuetuokouxiu.app.contract.TabContract;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.db.ProgrammeDao;
 import com.bbbond.kexuetuokouxiu.network.RemoteClient;
@@ -22,7 +22,7 @@ import rx.schedulers.Schedulers;
  * Created by bbbond on 2017/4/30.
  */
 
-public class HomeTabModel implements HomeTabContract.Model {
+public class TabModel implements TabContract.Model {
 
     /**
      * 通过类别获取节目列表

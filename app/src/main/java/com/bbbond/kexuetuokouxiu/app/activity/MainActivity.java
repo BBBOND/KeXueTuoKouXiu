@@ -1,5 +1,6 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,7 +14,6 @@ import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.fragment.DownloadFragment;
 import com.bbbond.kexuetuokouxiu.app.fragment.HomeFragment;
 import com.bbbond.kexuetuokouxiu.app.fragment.MeFragment;
-import com.bbbond.kexuetuokouxiu.utils.DensityUtil;
 
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -49,9 +49,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     private void initView() {
         navigationView = (BottomNavigationView) findViewById(R.id.navigation);
-
-        int bottom = checkDeviceHasNavigationBar(this) ? 48 : 0;
-        navigationView.setPadding(0, 0, 0, DensityUtil.dip2px(this, bottom));
     }
 
     private void initEvent() {

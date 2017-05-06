@@ -1,8 +1,5 @@
 package com.bbbond.kexuetuokouxiu.app.contract;
 
-import android.content.Context;
-
-import com.bbbond.kexuetuokouxiu.app.model.HomeTabModel;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 
 import java.util.List;
@@ -13,7 +10,7 @@ import rx.Observable;
  * Created by bbbond on 2017/4/30.
  */
 
-public interface HomeTabContract {
+public interface TabContract {
     interface Model {
         Observable<List<Programme>> getProgrammeListFromLocalByCategories(String[] category);
 
