@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.activity.ArticleDetailActivity;
 import com.bbbond.kexuetuokouxiu.app.adapter.ArticleAdapter;
+import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 /**
  * Created by bbbond on 2017/5/6.
@@ -22,6 +23,7 @@ public class ArticleTabFragment extends BaseTabFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_tab, null);
         categories = getArguments().getStringArray(CATEGORIES);
+        LogUtil.d(ArticleTabFragment.class, "onCreateView", categories);
         initView(view);
         initEvent();
         initData();

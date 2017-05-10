@@ -9,7 +9,9 @@ import com.yolanda.nohttp.URLConnectionNetworkExecutor;
 import com.yolanda.nohttp.cache.DBCacheStore;
 import com.yolanda.nohttp.cookie.DBCookieStore;
 
+import de.jonasrottmann.realmbrowser.RealmBrowser;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by Weya on 2016/11/10.
@@ -31,5 +33,6 @@ public class App extends Application {
         Logger.setTag("NoHttp");
         Realm.init(this);
         LogHelper.init(BuildConfig.DEBUG);
+        RealmBrowser.addFilesShortcut(this);
     }
 }

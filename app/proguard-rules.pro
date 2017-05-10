@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Realm Browser
+-keep class de.jonasrottmann.realmbrowser.* { *; }
+-keep class android.support.v7.widget.SearchView { *; }
+-keep class android.support.v7.view.** { *; }

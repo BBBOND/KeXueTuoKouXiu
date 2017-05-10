@@ -126,7 +126,13 @@ public class ParseUtil {
         } else if ("title".equals(nodeName) && programme != null) {
             programme.setTitle(parser.nextText());
         } else if ("link".equals(nodeName) && programme != null) {
-            programme.setLink(parser.nextText());
+            String link = parser.nextText();
+            programme.setLink(link);
+            try {
+                programme.setId(link != null && !link.equals("") ? EncryptUtils.MD5HEX(link) : UUID.randomUUID().toString());
+            } catch (NoSuchAlgorithmException e) {
+                programme.setId(UUID.randomUUID().toString());
+            }
         } else if ("pubDate".equals(nodeName) && programme != null) {
             programme.setPubDate(parser.nextText());
         } else if ("dc:creator".equals(nodeName) && programme != null) {
@@ -142,13 +148,7 @@ public class ParseUtil {
         } else if ("slash:comments".equals(nodeName) && programme != null) {
             programme.setComments(parser.nextText());
         } else if ("enclosure".equals(nodeName) && programme != null) {
-            String url = parser.getAttributeValue("url", "");
-            programme.setMediaUrl(url);
-            try {
-                programme.setId(url != null && !url.equals("") ? EncryptUtils.MD5HEX(url) : UUID.randomUUID().toString());
-            } catch (NoSuchAlgorithmException e) {
-                programme.setId(UUID.randomUUID().toString());
-            }
+            programme.setMediaUrl(parser.getAttributeValue("url", ""));
         } else if ("itunes:duration".equals(nodeName) && programme != null) {
             programme.setDuration(parser.nextText());
         }

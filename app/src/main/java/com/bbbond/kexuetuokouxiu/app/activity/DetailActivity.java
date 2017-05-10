@@ -75,8 +75,10 @@ public class DetailActivity extends AppCompatActivity implements DetailContract.
 
     private void initData() {
         Intent intent = getIntent();
-        if (intent == null)
+        if (intent == null) {
             finish();
+            return;
+        }
         programme = intent.getParcelableExtra(Main1Activity.PROGRAMME);
         if (programme != null)
             LogUtil.d(DetailActivity.class, "initData", programme.toString());

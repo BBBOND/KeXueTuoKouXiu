@@ -18,8 +18,15 @@ public class LogUtil {
             if (logContent instanceof String)
                 Log.d(clas.getSimpleName(), methodName + "---->" + logContent);
             else if (logContent instanceof List) {
+                Log.d(clas.getSimpleName(), methodName + "------> size: " + ((List) logContent).size());
                 for (Object obj : (List) logContent)
                     Log.d(clas.getSimpleName(), methodName + "------>" + obj.toString());
+            } else if (logContent instanceof String[]) {
+                int length = ((String[]) logContent).length;
+                Log.d(clas.getSimpleName(), methodName + "------> length: " + length);
+                for (int i = 0; i < length; i++) {
+                    Log.d(clas.getSimpleName(), methodName + "------>" + ((String[]) logContent)[i]);
+                }
             } else
                 Log.d(clas.getSimpleName(), methodName + "------>" + String.valueOf(logContent));
             Log.d(clas.getSimpleName(), methodName + "===========================");

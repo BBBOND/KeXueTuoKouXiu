@@ -1,19 +1,14 @@
 package com.bbbond.kexuetuokouxiu.db;
 
 import com.bbbond.kexuetuokouxiu.bean.Programme;
+import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
@@ -26,6 +21,7 @@ public class ProgrammeDao extends BaseDao {
         return createObservable(new Func1<Realm, Void>() {
             @Override
             public Void call(Realm realm) {
+                LogUtil.e(ProgrammeDao.class, "saveOrUpdate", programmes.size() + "");
                 realm.copyToRealmOrUpdate(programmes);
                 return null;
             }

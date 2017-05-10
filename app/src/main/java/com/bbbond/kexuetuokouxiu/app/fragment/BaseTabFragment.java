@@ -39,7 +39,7 @@ public class BaseTabFragment extends Fragment implements TabContract.View, Swipe
             presenter.getProgrammeListRemote(categories);
         }
         LogUtil.d(BaseTabFragment.class, "onRefresh", "开始刷新");
-        LogUtil.d(BaseTabFragment.class, "onRefresh", categories[0]);
+        LogUtil.d(BaseTabFragment.class, "onRefresh", categories);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class BaseTabFragment extends Fragment implements TabContract.View, Swipe
         if (adapter != null)
             adapter.notifyDataSetChanged();
         showNoData();
-        LogUtil.d(BaseTabFragment.class, "receiveProgrammeList", programmes);
+        LogUtil.d(BaseTabFragment.class, "receiveProgrammeList", programmes.size());
     }
 
     @Override
@@ -85,9 +85,11 @@ public class BaseTabFragment extends Fragment implements TabContract.View, Swipe
     }
 
     public void initData() {
-        if (presenter != null && programmeList.size() == 0)
+        if (presenter != null && programmeList.size() == 0) {
             presenter.getProgrammeList(categories, true);
-        LogUtil.d(BaseTabFragment.class, "initData", categories[0]);
+            refreshing(true);
+        }
+        LogUtil.d(BaseTabFragment.class, "initData", categories);
     }
 
     public void showNoData() {

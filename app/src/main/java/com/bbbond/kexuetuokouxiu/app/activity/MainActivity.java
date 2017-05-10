@@ -1,6 +1,5 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
