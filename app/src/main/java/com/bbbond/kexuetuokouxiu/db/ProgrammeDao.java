@@ -45,4 +45,15 @@ public class ProgrammeDao extends BaseDao {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
+
+    public static Programme getProgrammeById(final String id) {
+        Programme programme = null;
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Programme first = realm.where(Programme.class).equalTo("id", id).findAll().first();
+        if (first != null)
+            programme = realm.copyFromRealm(first);
+        realm.commitTransaction();
+        return programme;
+    }
 }

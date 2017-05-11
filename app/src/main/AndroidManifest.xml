@@ -28,16 +28,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app.activity.DetailActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTask"
+            android:name=".app.activity.ArticleDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".app.activity.ArticleDetailActivity"
+            android:name=".app.activity.PlayingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.Dark.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 

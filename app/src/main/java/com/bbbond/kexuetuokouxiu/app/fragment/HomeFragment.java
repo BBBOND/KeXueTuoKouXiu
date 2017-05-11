@@ -87,8 +87,8 @@ public class HomeFragment extends Fragment {
         tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_launcher);
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        viewPager.setPadding(0, tabLayout.getHeight(), 0, 0);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 

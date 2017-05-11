@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -48,6 +49,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     private void initView() {
         navigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
     }
 
     private void initEvent() {
@@ -95,6 +97,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         } else {
             transaction.hide(currentFragment).add(R.id.content, targetFragment);
         }
+//        transaction.replace(R.id.content, targetFragment);
         transaction.commit();
         currentFragment = targetFragment;
         return true;

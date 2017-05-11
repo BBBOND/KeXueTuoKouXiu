@@ -2,6 +2,8 @@ package com.bbbond.kexuetuokouxiu;
 
 import android.app.Application;
 
+import com.bbbond.kexuetuokouxiu.app.activity.PlayingActivity;
+import com.bbbond.simpleplayer.SimplePlayer;
 import com.bbbond.simpleplayer.helper.LogHelper;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
@@ -34,5 +36,10 @@ public class App extends Application {
         Realm.init(this);
         LogHelper.init(BuildConfig.DEBUG);
         RealmBrowser.addFilesShortcut(this);
+
+        SimplePlayer.getInstance().setDefaultArtImgRes(R.drawable.kexuetuokouxiu_2014);
+        SimplePlayer.getInstance().setPlayingActivity(PlayingActivity.class);
+        SimplePlayer.getInstance().setPlayContinuously(false);
+        SimplePlayer.getInstance().setSmallNotificationIcon(R.mipmap.ic_launcher);
     }
 }

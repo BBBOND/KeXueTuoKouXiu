@@ -3,6 +3,7 @@ package com.bbbond.kexuetuokouxiu.utils;
 import com.bbbond.kexuetuokouxiu.bean.Comment;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.bean.ScienceTalkShow;
+import com.bbbond.simpleplayer.model.MediaData;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -41,27 +42,27 @@ public class ParseUtil {
                         scienceTalkShow = new ScienceTalkShow();
                         break;
                     case XmlPullParser.START_TAG:
-                        if ("title".equals(nodeName)  && scienceTalkShow != null) {
+                        if ("title".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setTitle(parser.nextText());
-                        } else if ("link".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("link".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setLink(parser.nextText());
-                        } else if ("description".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("description".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setDescription(parser.nextText());
-                        } else if ("lastBuildDate".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("lastBuildDate".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setLastBuildDate(parser.nextText());
-                        } else if ("language".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("language".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setLanguage(parser.nextText());
-                        } else if ("itunes:summary".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("itunes:summary".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setSummary(parser.nextText());
-                        } else if ("itunes:name".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("itunes:name".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setAuthorName(parser.nextText());
-                        } else if ("itunes:email".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("itunes:email".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setAuthorEmail(parser.nextText());
-                        } else if ("copyright".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("copyright".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setCopyright(parser.nextText());
-                        } else if ("itunes:subtitle".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("itunes:subtitle".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setSubtitle(parser.nextText());
-                        } else if ("url".equals(nodeName)  && scienceTalkShow != null) {
+                        } else if ("url".equals(nodeName) && scienceTalkShow != null) {
                             scienceTalkShow.setImage(parser.nextText());
                         }
                         break;
@@ -201,5 +202,19 @@ public class ParseUtil {
             comments = null;
         }
         return comments;
+    }
+
+    public static MediaData parseProgramme2MediaData(Programme programme) {
+        MediaData mediaData = new MediaData();
+        mediaData.setMediaId(programme.getId());
+        mediaData.setMediaUri(programme.getMediaUrl());
+        mediaData.setTitle(programme.getTitle());
+        mediaData.setDisplayTitle(programme.getTitle());
+        mediaData.setDisplayDescription(programme.getDescription());
+        mediaData.setArtist(programme.getCategory());
+        mediaData.setAuthor(programme.getCreator());
+        mediaData.setDate(programme.getPubDate());
+        mediaData.setGenre(programme.getCategory());
+        return mediaData;
     }
 }
