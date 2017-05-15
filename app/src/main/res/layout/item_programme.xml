@@ -8,7 +8,10 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:elevation="3dp"
+        android:focusable="true"
         app:cardCornerRadius="5dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true">
@@ -34,7 +37,7 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:text="No.276程序猿是钱多话少死得早吗"
-                android:textColor="#54d0e2"
+                android:textColor="@color/accent_text"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -54,7 +57,7 @@
                     android:drawableLeft="@drawable/ic_person"
                     android:gravity="center_vertical"
                     android:text="by aprilivy"
-                    android:textColor="#b3000000"
+                    android:textColor="@color/sub_text"
                     android:textSize="14sp" />
 
                 <TextView
@@ -66,7 +69,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
                     android:text="11月 8, 2016"
-                    android:textColor="#b3000000"
+                    android:textColor="@color/sub_text"
                     android:textSize="14sp" />
             </RelativeLayout>
         </RelativeLayout>

@@ -25,7 +25,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    public final String[][] categories = new String[][]{
+    public static final String[][] categories = new String[][]{
             {"科学脱口秀", "未分类"},
             {"听众互动"},
             {"科脱在别处"},

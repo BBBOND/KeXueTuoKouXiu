@@ -3,7 +3,9 @@ package com.bbbond.kexuetuokouxiu.app.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +35,9 @@ public class ArticleTabFragment extends BaseTabFragment {
     @Override
     public void initView(View view) {
         super.initView(view);
-        GridLayoutManager manager = new GridLayoutManager(getActivity().getBaseContext(), 1);
         adapter = new ArticleAdapter(getActivity(), programmeList);
-        recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
         if (programmeList == null || programmeList.size() == 0)
             showNoData();

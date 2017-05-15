@@ -11,6 +11,14 @@
     <string name="search">搜索</string>
     <string name="type">#%s</string>
     <string name="read_text">查看原文</string>
+    <string name="no_programme">没有节目</string>
+    <string name="download_finish">已全部下载完成</string>
+    <string name="download_no_data">未缓存任何节目</string>
+    <string name="download_process">下载进度：%1$s/%2$s</string>
+    <string name="download_num">(%1$s)</string>
+    <string name="pause_all">全部暂停</string>
+    <string name="clear_all">清空</string>
+
 
     <string-array name="tabs">
         <item>脱口秀</item>

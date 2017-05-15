@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     private void initFragments() {
         homeFragment = new HomeFragment();
         downloadFragment = new DownloadFragment();
-        meFragment = new MeFragment();
+//        meFragment = new MeFragment();
         currentFragment = homeFragment;
 
         FragmentManager fm = getSupportFragmentManager();
@@ -77,12 +77,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                     downloadFragment = new DownloadFragment();
                 targetFragment = downloadFragment;
                 break;
-            case R.id.nav_me:
-                if (currentFragment == meFragment) return true;
-                if (meFragment == null)
-                    meFragment = new MeFragment();
-                targetFragment = meFragment;
-                break;
+//            case R.id.nav_me:
+//                if (currentFragment == meFragment) return true;
+//                if (meFragment == null)
+//                    meFragment = new MeFragment();
+//                targetFragment = meFragment;
+//                break;
             default:
                 if (currentFragment == homeFragment) return true;
                 if (homeFragment == null)

@@ -37,6 +37,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".app.activity.DownloadDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 
 </manifest>

@@ -8,8 +8,8 @@
         android:id="@+id/nav_download"
         android:icon="@drawable/ic_download"
         android:title="@string/downloaded" />
-    <item
-        android:id="@+id/nav_me"
-        android:icon="@drawable/ic_me"
-        android:title="@string/about" />
+    <!--<item-->
+        <!--android:id="@+id/nav_me"-->
+        <!--android:icon="@drawable/ic_me"-->
+        <!--android:title="@string/about" />-->
 </menu>
