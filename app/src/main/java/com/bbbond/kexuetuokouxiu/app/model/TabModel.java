@@ -4,6 +4,7 @@ import com.bbbond.kexuetuokouxiu.app.contract.TabContract;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.db.ProgrammeDao;
 import com.bbbond.kexuetuokouxiu.network.RemoteClient;
+import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 import com.bbbond.kexuetuokouxiu.utils.ParseUtil;
 import com.google.gson.Gson;
 
@@ -32,7 +33,7 @@ public class TabModel implements TabContract.Model {
      */
     @Override
     public Observable<List<Programme>> getProgrammeListFromLocalByCategories(final String[] category) {
-        return ProgrammeDao.getProgrammeListByCategories(category);
+        return ProgrammeDao.getInstance().getProgrammeListByCategories(category);
     }
 
     /**
@@ -43,7 +44,7 @@ public class TabModel implements TabContract.Model {
      */
     @Override
     public Observable<Void> saveProgrammeList(List<Programme> programmeList) {
-        return ProgrammeDao.saveOrUpdate(programmeList);
+        return ProgrammeDao.getInstance().saveOrUpdate(programmeList);
     }
 
     /**
@@ -53,6 +54,7 @@ public class TabModel implements TabContract.Model {
      */
     @Override
     public Observable<List<Programme>> fetchRemoteFromJson() {
+        LogUtil.d(TabModel.class, "fetchRemoteFromJson", "");
         return RemoteClient
                 .getProgrammesFromJson()
                 .flatMap(new Func1<JSONArray, Observable<List<Programme>>>() {
@@ -90,6 +92,7 @@ public class TabModel implements TabContract.Model {
      */
     @Override
     public Observable<List<Programme>> fetchRemoteFromXml() {
+        LogUtil.d(TabModel.class, "fetchRemoteFromXml", "");
         return RemoteClient
                 .getProgrammesFromXml()
                 .flatMap(new Func1<String, Observable<List<Programme>>>() {

@@ -45,12 +45,15 @@ public abstract class OnSubscribeRealm<T> implements Observable.OnSubscribe<T> {
         subscriber.add(newUnsubscribeAction(subscriber));
         subscribers.add(subscriber);
 
-        RealmConfiguration.Builder builder = new RealmConfiguration.Builder();
-        builder.deleteRealmIfMigrationNeeded();
+        Realm realm;
         if (fileName != null) {
+            RealmConfiguration.Builder builder = new RealmConfiguration.Builder();
+            builder.deleteRealmIfMigrationNeeded();
             builder.name(fileName);
+            realm = Realm.getInstance(builder.build());
+        } else {
+            realm = Realm.getDefaultInstance();
         }
-        Realm realm = Realm.getInstance(builder.build());
         boolean withError = false;
 
         T object = null;

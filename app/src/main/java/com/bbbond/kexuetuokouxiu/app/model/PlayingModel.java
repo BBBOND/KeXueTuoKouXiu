@@ -12,6 +12,6 @@ public class PlayingModel implements PlayingContract.Model {
 
     @Override
     public Programme getProgrammeById(String id) {
-        return ProgrammeDao.getProgrammeById(id);
+        return ProgrammeDao.getInstance().getProgrammeById(id);
     }
 }

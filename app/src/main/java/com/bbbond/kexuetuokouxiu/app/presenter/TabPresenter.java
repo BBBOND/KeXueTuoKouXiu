@@ -89,6 +89,7 @@ public class TabPresenter implements TabContract.Presenter {
                     public void onError(Throwable e) {
                         LogUtil.e(TabPresenter.class, "getProgrammeListRemote", e.getMessage());
                         view.refreshing(false);
+                        view.showToast("获取失败，请检查网络！");
                     }
 
                     @Override
@@ -141,7 +142,7 @@ public class TabPresenter implements TabContract.Presenter {
                     @Override
                     public void onCompleted() {
                         LogUtil.d(TabPresenter.class, "saveProgrammeList", "onCompleted");
-                            getProgrammeList(category, false);
+                        getProgrammeList(category, false);
                     }
 
                     @Override

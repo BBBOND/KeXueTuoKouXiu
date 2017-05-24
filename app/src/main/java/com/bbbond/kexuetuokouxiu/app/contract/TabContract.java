@@ -27,6 +27,8 @@ public interface TabContract {
         void refreshing(boolean isRefreshing);
 
         void receiveProgrammeList(List<Programme> programmes);
+
+        void showToast(String msg);
     }
 
     interface Presenter {

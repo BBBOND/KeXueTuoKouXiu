@@ -2,13 +2,17 @@ package com.bbbond.kexuetuokouxiu.app.activity;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 
 import com.bbbond.kexuetuokouxiu.R;
+import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.lang.reflect.Method;
 
@@ -35,7 +39,8 @@ public class BaseActivity extends AppCompatActivity {
             } else if ("0".equals(navBarOverride)) {
                 hasNavigationBar = true;
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
         return hasNavigationBar;
     }
 

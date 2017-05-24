@@ -17,7 +17,21 @@ import rx.schedulers.Schedulers;
 
 public class ProgrammeDao extends BaseDao {
 
-    public static Observable<Void> saveOrUpdate(final List<Programme> programmes) {
+    private static class ProgrammeDaoHolder {
+        /**
+         * 静态初始化器，由JVM来保证线程安全
+         */
+        private static final ProgrammeDao instance = new ProgrammeDao();
+    }
+
+    public static ProgrammeDao getInstance() {
+        return ProgrammeDaoHolder.instance;
+    }
+
+    private ProgrammeDao() {
+    }
+
+    public Observable<Void> saveOrUpdate(final List<Programme> programmes) {
         return createObservable(new Func1<Realm, Void>() {
             @Override
             public Void call(Realm realm) {
@@ -28,7 +42,7 @@ public class ProgrammeDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<List<Programme>> getAllProgrammeList() {
+    public Observable<List<Programme>> getAllProgrammeList() {
         return createObservable(new Func1<Realm, List<Programme>>() {
             @Override
             public List<Programme> call(Realm realm) {
@@ -37,7 +51,7 @@ public class ProgrammeDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<List<Programme>> getProgrammeListByCategories(final String[] category) {
+    public Observable<List<Programme>> getProgrammeListByCategories(final String[] category) {
         return createObservable(new Func1<Realm, List<Programme>>() {
             @Override
             public List<Programme> call(Realm realm) {
@@ -46,7 +60,7 @@ public class ProgrammeDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Programme getProgrammeById(final String id) {
+    public Programme getProgrammeById(final String id) {
         Programme programme = null;
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

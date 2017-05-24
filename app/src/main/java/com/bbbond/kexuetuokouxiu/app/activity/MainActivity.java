@@ -9,11 +9,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.fragment.DownloadFragment;
 import com.bbbond.kexuetuokouxiu.app.fragment.HomeFragment;
 import com.bbbond.kexuetuokouxiu.app.fragment.MeFragment;
+import com.bbbond.kexuetuokouxiu.helper.NetHelper;
 
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -30,8 +32,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initFragments();
         initView();
+        initFragments();
         initEvent();
     }
 
@@ -40,7 +42,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         downloadFragment = new DownloadFragment();
 //        meFragment = new MeFragment();
         currentFragment = homeFragment;
-
+        if (NetHelper.getAPNType(getApplicationContext()) == NetHelper.NO_NETWORK) {
+            currentFragment = downloadFragment;
+            Toast.makeText(getApplicationContext(), "当前无网络!", Toast.LENGTH_SHORT).show();
+        }
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.add(R.id.content, currentFragment);
@@ -49,6 +54,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     private void initView() {
         navigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        navigationView.setSelectedItemId(NetHelper.getAPNType(getApplicationContext()) == NetHelper.NO_NETWORK ? R.id.nav_download : R.id.nav_home);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
     }
 

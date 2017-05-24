@@ -1,5 +1,6 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -20,6 +21,7 @@ import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.contract.PlayingContract;
 import com.bbbond.kexuetuokouxiu.app.presenter.PlayingPresenter;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
+import com.bbbond.kexuetuokouxiu.helper.NetHelper;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 import com.bbbond.kexuetuokouxiu.utils.ParseUtil;
 import com.bbbond.simpleplayer.SimplePlayer;
@@ -72,7 +74,6 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                 finishActivity();
                 return;
             }
-
         }
     }
 
@@ -280,6 +281,10 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
         SimplePlayer.getInstance().setOnProgressChangeListener(null);
     }
 
+    private void startDownload(boolean downloadNow) {
+        // TODO: 2017/5/24 开始下载
+    }
+
     @Override
     public void onBackPressed() {
         finishActivity();
@@ -299,16 +304,14 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ibtn_about:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(programme.getTitle());
-                builder.setMessage(Html.fromHtml(programme.getSummary()));
-                builder.setPositiveButton("知道了", null);
-                builder.create().show();
+                createDialog(programme.getTitle(), programme.getSummary())
+                        .setPositiveButton("知道了", null)
+                        .create().show();
                 break;
             case R.id.ibtn_play:
                 switch (playState) {
                     case 0:
-                        startPlay();
+                        startPlayAfterCheck();
                         break;
                     case 1:
                         play();
@@ -324,6 +327,57 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
             case R.id.ibtn_rewind:
                 rewind();
                 break;
+            case R.id.ibtn_download:
+                startDownloadAfterCheck();
+                break;
+        }
+    }
+
+    private void startDownloadAfterCheck() {
+        if (NetHelper.getAPNType(getApplicationContext()) == NetHelper.NO_NETWORK) {
+            Toast.makeText(getApplicationContext(), "无法访问网络，请检查网络状态", Toast.LENGTH_SHORT).show();
+            initState(PlaybackStateCompat.STATE_STOPPED);
+        } else if (NetHelper.getAPNType(getApplicationContext()) != NetHelper.WIFI) {
+            createDialog("高能预警", "当前正使用4G/3G/2G网络，是否继续下载？")
+                    .setPositiveButton("立即下载", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startDownload(true);
+                        }
+                    })
+                    .setNegativeButton("等待WLAN", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startDownload(false);
+                        }
+                    })
+                    .create().show();
+        } else {
+            startDownload(true);
+        }
+    }
+
+    private void startPlayAfterCheck() {
+        if (NetHelper.getAPNType(getApplicationContext()) == NetHelper.NO_NETWORK) {
+            Toast.makeText(getApplicationContext(), "无法访问网络，请检查网络状态", Toast.LENGTH_SHORT).show();
+            initState(PlaybackStateCompat.STATE_STOPPED);
+        } else if (NetHelper.getAPNType(getApplicationContext()) != NetHelper.WIFI) {
+            createDialog("高能预警", "当前正使用4G/3G/2G网络，是否继续播放？")
+                    .setPositiveButton("土豪，继续播", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startPlay();
+                        }
+                    })
+                    .setNegativeButton("算了", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            initState(PlaybackStateCompat.STATE_STOPPED);
+                        }
+                    })
+                    .create().show();
+        } else {
+            startPlay();
         }
     }
 
@@ -346,7 +400,7 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
         });
         initState(SimplePlayer.getInstance().getState());
         if (!programme.getMediaUrl().equals(SimplePlayer.getInstance().getMediaUri()))
-            startPlay();
+            startPlayAfterCheck();
     }
 
     @Override
@@ -354,6 +408,13 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
         super.onStop();
         unregisterProgressListener();
         SimplePlayer.getInstance().unregisterMediaControllerCallback();
+    }
+
+    public AlertDialog.Builder createDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(Html.fromHtml(message));
+        return builder;
     }
 
     private class SeekBarChangeEvent implements SeekBar.OnSeekBarChangeListener {

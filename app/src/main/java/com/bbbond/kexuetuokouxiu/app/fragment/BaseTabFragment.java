@@ -6,10 +6,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.contract.TabContract;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
+import com.bbbond.kexuetuokouxiu.helper.NetHelper;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.ArrayList;
@@ -68,6 +70,12 @@ public class BaseTabFragment extends Fragment implements TabContract.View, Swipe
     }
 
     @Override
+    public void showToast(String msg) {
+        if (getContext() != null && msg != null && !msg.equals(""))
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         showNoData();
@@ -86,7 +94,7 @@ public class BaseTabFragment extends Fragment implements TabContract.View, Swipe
 
     public void initData() {
         if (presenter != null && programmeList.size() == 0) {
-            presenter.getProgrammeList(categories, true);
+            presenter.getProgrammeList(categories, NetHelper.getAPNType(getContext()) != NetHelper.NO_NETWORK);
             refreshing(true);
         }
         LogUtil.d(BaseTabFragment.class, "initData", categories);
