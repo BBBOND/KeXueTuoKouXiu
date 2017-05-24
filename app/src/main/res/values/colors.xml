@@ -15,5 +15,6 @@
     <color name="accent_text">#4A90E2</color>
 
     <color name="border">#8E8E8E</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>

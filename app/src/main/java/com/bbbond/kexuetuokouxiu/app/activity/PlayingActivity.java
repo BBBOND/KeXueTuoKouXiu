@@ -81,7 +81,7 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
         title = (TextView) findViewById(R.id.tv_title);
         currentTime = (TextView) findViewById(R.id.tv_current_time);
         totalTime = (TextView) findViewById(R.id.tv_total_time);
@@ -121,6 +121,7 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
             public void success(MediaControllerCompat.TransportControls transportControls) {
                 if (transportControls != null) {
                     transportControls.playFromMediaId(programme.getId(), null);
+                    Toast.makeText(PlayingActivity.this, "开始加载节目...", Toast.LENGTH_SHORT).show();
                 } else {
                     LogUtil.e(PlayingActivity.class, "startPlay", "获取控制器失败");
                 }

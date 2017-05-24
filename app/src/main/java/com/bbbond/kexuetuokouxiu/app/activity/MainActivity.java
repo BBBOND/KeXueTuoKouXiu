@@ -1,5 +1,6 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -65,6 +66,16 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
+                break;
+        }
         return true;
     }
 

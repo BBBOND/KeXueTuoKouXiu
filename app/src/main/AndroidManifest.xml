@@ -30,17 +30,22 @@
         <activity
             android:name=".app.activity.ArticleDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar2"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".app.activity.PlayingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar2"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".app.activity.DownloadDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar2"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".app.activity.SearchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar2"
             android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 

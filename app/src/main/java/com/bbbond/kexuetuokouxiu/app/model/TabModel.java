@@ -33,7 +33,7 @@ public class TabModel implements TabContract.Model {
      */
     @Override
     public Observable<List<Programme>> getProgrammeListFromLocalByCategories(final String[] category) {
-        return ProgrammeDao.getInstance().getProgrammeListByCategories(category);
+        return ProgrammeDao.getInstance().rxGetProgrammeListByCategories(category);
     }
 
     /**

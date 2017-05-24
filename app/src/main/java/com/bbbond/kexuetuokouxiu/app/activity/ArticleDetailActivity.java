@@ -53,7 +53,7 @@ public class ArticleDetailActivity extends BaseActivity {
     private void initView() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
         getSupportActionBar().setTitle(programme.getTitle());
 
         tvTitle = (TextView) findViewById(R.id.tvTitle);

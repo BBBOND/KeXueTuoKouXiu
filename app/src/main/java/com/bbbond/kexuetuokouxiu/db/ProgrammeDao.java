@@ -3,9 +3,14 @@ package com.bbbond.kexuetuokouxiu.db;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -51,7 +56,7 @@ public class ProgrammeDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<List<Programme>> getProgrammeListByCategories(final String[] category) {
+    public Observable<List<Programme>> rxGetProgrammeListByCategories(final String[] category) {
         return createObservable(new Func1<Realm, List<Programme>>() {
             @Override
             public List<Programme> call(Realm realm) {
@@ -69,5 +74,15 @@ public class ProgrammeDao extends BaseDao {
             programme = realm.copyFromRealm(first);
         realm.commitTransaction();
         return programme;
+    }
+
+    public List<Programme> getProgrammeListByKey(String key) {
+        List<Programme> programmes = null;
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Programme> all = realm.where(Programme.class).contains("title", key).or().contains("category", key).findAll();
+        programmes = realm.copyFromRealm(all);
+        realm.commitTransaction();
+        return programmes;
     }
 }
