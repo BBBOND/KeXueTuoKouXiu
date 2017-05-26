@@ -11,9 +11,11 @@ import com.yolanda.nohttp.rest.StringRequest;
 
 import org.json.JSONArray;
 
-import rx.Observable;
-import rx.Subscriber;
-
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 网络请求
@@ -45,52 +47,42 @@ public class RemoteClient {
     }
 
     public static Observable<String> getProgrammesFromXml() {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+        return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(final Subscriber<? super String> subscriber) {
+            public void subscribe(final ObservableEmitter<String> e) throws Exception {
                 getScienceTalkShow(new SimpleResponseListener<String>() {
                     @Override
-                    public void onStart(int what) {
-                        subscriber.onStart();
-                    }
-
-                    @Override
                     public void onSucceed(int what, Response<String> response) {
-                        subscriber.onNext(response.get());
-                        subscriber.onCompleted();
+                        e.onNext(response.get());
+                        e.onComplete();
                     }
 
                     @Override
                     public void onFailed(int what, Response<String> response) {
-                        subscriber.onError(response.getException());
+                        e.onError(response.getException());
                     }
                 });
             }
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     public static Observable<JSONArray> getProgrammesFromJson() {
-        return Observable.create(new Observable.OnSubscribe<JSONArray>() {
+        return Observable.create(new ObservableOnSubscribe<JSONArray>() {
             @Override
-            public void call(final Subscriber<? super JSONArray> subscriber) {
+            public void subscribe(final ObservableEmitter<JSONArray> e) throws Exception {
                 getProgrammesFromJson(new SimpleResponseListener<JSONArray>() {
                     @Override
-                    public void onStart(int what) {
-                        subscriber.onStart();
-                    }
-
-                    @Override
                     public void onSucceed(int what, Response<JSONArray> response) {
-                        subscriber.onNext(response.get());
-                        subscriber.onCompleted();
+                        e.onNext(response.get());
+                        e.onComplete();
                     }
 
                     @Override
                     public void onFailed(int what, Response<JSONArray> response) {
-                        subscriber.onError(response.getException());
+                        e.onError(response.getException());
                     }
                 });
             }
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }

@@ -19,6 +19,7 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
     private String title;
     private String creator;
     private String category;
+    private boolean isFinished;
 
     public ProgrammeCache() {
     }
@@ -29,6 +30,7 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
         title = in.readString();
         creator = in.readString();
         category = in.readString();
+        isFinished = in.readByte() != 0;
     }
 
     public static final Creator<ProgrammeCache> CREATOR = new Creator<ProgrammeCache>() {
@@ -83,6 +85,14 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
         this.category = category;
     }
 
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -110,5 +120,6 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
         dest.writeString(title);
         dest.writeString(creator);
         dest.writeString(category);
+        dest.writeByte((byte) (isFinished ? 1 : 0));
     }
 }

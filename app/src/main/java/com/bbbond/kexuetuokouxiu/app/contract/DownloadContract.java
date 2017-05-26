@@ -2,6 +2,10 @@ package com.bbbond.kexuetuokouxiu.app.contract;
 
 import android.view.View;
 
+import com.bbbond.kexuetuokouxiu.bean.DownloadItem;
+
+import java.util.List;
+
 /**
  * Created by bbbond on 2017/5/15.
  */
@@ -11,12 +15,10 @@ public interface DownloadContract {
     }
 
     interface View {
-        void addView(String title, long num, boolean complete, android.view.View.OnClickListener listener, String... a);
-
-        void toDetail(String title, int pos);
+        void receiveDownloadItemList(List<DownloadItem> downloadItemList);
     }
 
     interface Presenter {
-        void initContent(String[] types);
+        void showContent(List<String> itemTitles);
     }
 }

@@ -1,9 +1,7 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -11,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,7 +127,7 @@ public class SearchActivity extends BaseActivity {
                     if (adapter != null)
                         adapter.notifyDataSetChanged();
                 } else {
-                    List<Programme> list = ProgrammeDao.getInstance().getProgrammeListByKey(newText);
+                    List<Programme> list = ProgrammeDao.getInstance().searchProgrammeListByKey(newText);
                     if (list != null) {
                         programmeList.clear();
                         programmeList.addAll(list);

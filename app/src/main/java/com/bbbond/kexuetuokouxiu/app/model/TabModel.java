@@ -13,11 +13,8 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 
 /**
  * Created by bbbond on 2017/4/30.
@@ -29,7 +26,7 @@ public class TabModel implements TabContract.Model {
      * 通过类别获取节目列表
      *
      * @param category 节目类型
-     * @return Observable<List<Programme>>
+     * @return Observable\<List\<Programme\>\>
      */
     @Override
     public Observable<List<Programme>> getProgrammeListFromLocalByCategories(final String[] category) {
@@ -44,7 +41,7 @@ public class TabModel implements TabContract.Model {
      */
     @Override
     public Observable<Void> saveProgrammeList(List<Programme> programmeList) {
-        return ProgrammeDao.getInstance().saveOrUpdate(programmeList);
+        return ProgrammeDao.getInstance().rxSaveOrUpdate(programmeList);
     }
 
     /**
@@ -57,30 +54,24 @@ public class TabModel implements TabContract.Model {
         LogUtil.d(TabModel.class, "fetchRemoteFromJson", "");
         return RemoteClient
                 .getProgrammesFromJson()
-                .flatMap(new Func1<JSONArray, Observable<List<Programme>>>() {
+                .map(new Function<JSONArray, List<Programme>>() {
                     @Override
-                    public Observable<List<Programme>> call(final JSONArray jsonArray) {
-                        return Observable.create(new Observable.OnSubscribe<List<Programme>>() {
-                            @Override
-                            public void call(Subscriber<? super List<Programme>> subscriber) {
-                                try {
-                                    List<Programme> programmes = new ArrayList<>();
-                                    Gson gson = new Gson();
-                                    int length = jsonArray.length();
-                                    try {
-                                        for (int i = 0; i < length; i++) {
-                                            programmes.add(gson.fromJson(jsonArray.get(i).toString(), Programme.class));
-                                        }
-                                    } catch (Exception e) {
-                                        programmes = null;
-                                    }
-                                    subscriber.onNext(programmes);
-                                    subscriber.onCompleted();
-                                } catch (Exception e) {
-                                    subscriber.onError(e);
+                    public List<Programme> apply(JSONArray jsonArray) throws Exception {
+                        try {
+                            List<Programme> programmes = new ArrayList<>();
+                            Gson gson = new Gson();
+                            int length = jsonArray.length();
+                            try {
+                                for (int i = 0; i < length; i++) {
+                                    programmes.add(gson.fromJson(jsonArray.get(i).toString(), Programme.class));
                                 }
+                            } catch (Exception e) {
+                                programmes = null;
                             }
-                        });
+                            return programmes;
+                        } catch (Exception e) {
+                            return null;
+                        }
                     }
                 });
     }
@@ -95,24 +86,15 @@ public class TabModel implements TabContract.Model {
         LogUtil.d(TabModel.class, "fetchRemoteFromXml", "");
         return RemoteClient
                 .getProgrammesFromXml()
-                .flatMap(new Func1<String, Observable<List<Programme>>>() {
+                .map(new Function<String, List<Programme>>() {
                     @Override
-                    public Observable<List<Programme>> call(final String s) {
-                        return Observable.create(new Observable.OnSubscribe<List<Programme>>() {
-                            @Override
-                            public void call(Subscriber<? super List<Programme>> subscriber) {
-                                try {
-                                    List<Programme> programmeList = ParseUtil.parseXml2ProgrammeList(s);
-                                    subscriber.onNext(programmeList);
-                                    subscriber.onCompleted();
-                                } catch (Exception e) {
-                                    subscriber.onError(e);
-                                }
-                            }
-                        });
+                    public List<Programme> apply(String s) throws Exception {
+                        try {
+                            return ParseUtil.parseXml2ProgrammeList(s);
+                        } catch (Exception e) {
+                            return null;
+                        }
                     }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                });
     }
 }

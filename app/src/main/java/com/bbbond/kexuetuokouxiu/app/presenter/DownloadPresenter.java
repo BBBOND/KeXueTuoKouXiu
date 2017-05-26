@@ -1,11 +1,13 @@
 package com.bbbond.kexuetuokouxiu.app.presenter;
 
-import android.view.View;
-
 import com.bbbond.kexuetuokouxiu.app.contract.DownloadContract;
 import com.bbbond.kexuetuokouxiu.app.fragment.HomeFragment;
 import com.bbbond.kexuetuokouxiu.app.model.DownloadModel;
+import com.bbbond.kexuetuokouxiu.bean.DownloadItem;
 import com.bbbond.kexuetuokouxiu.db.ProgrammeCacheDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bbbond on 2017/5/15.
@@ -22,18 +24,19 @@ public class DownloadPresenter implements DownloadContract.Presenter {
     }
 
     @Override
-    public void initContent(final String[] types) {
-        int length = types.length - 1;
+    public void showContent(List<String> itemTitles) {
+        List<DownloadItem> downloadItems = new ArrayList<>();
+        int length = itemTitles.size() - 1;
         for (int i = 0; i < length; i++) {
-            final String type = types[i];
-            final int pos = i;
-            Long size = ProgrammeCacheDao.sizeOfCategories(HomeFragment.categories[i]);
-            view.addView(types[i], size, true, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    view.toDetail(type, pos);
-                }
-            });
+            DownloadItem downloadItem = new DownloadItem();
+            Long size = ProgrammeCacheDao.getInstance().sizeOfCategories(HomeFragment.categories[i]);
+            Long cachedSize = ProgrammeCacheDao.getInstance().sizeOfCategories(HomeFragment.categories[i], true);
+            downloadItem.setSize(size);
+            downloadItem.setCachedSize(cachedSize);
+            downloadItem.setTitle(itemTitles.get(i));
+            downloadItem.setTitleNum(String.valueOf(size));
+            downloadItems.add(downloadItem);
         }
+        view.receiveDownloadItemList(downloadItems);
     }
 }

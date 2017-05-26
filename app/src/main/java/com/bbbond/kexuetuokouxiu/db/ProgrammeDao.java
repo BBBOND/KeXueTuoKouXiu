@@ -3,20 +3,18 @@ package com.bbbond.kexuetuokouxiu.db;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
+ * 节目数据层
  * Created by bbbond on 2017/4/20.
  */
 
@@ -36,35 +34,6 @@ public class ProgrammeDao extends BaseDao {
     private ProgrammeDao() {
     }
 
-    public Observable<Void> saveOrUpdate(final List<Programme> programmes) {
-        return createObservable(new Func1<Realm, Void>() {
-            @Override
-            public Void call(Realm realm) {
-                LogUtil.e(ProgrammeDao.class, "saveOrUpdate", programmes.size() + "");
-                realm.copyToRealmOrUpdate(programmes);
-                return null;
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<List<Programme>> getAllProgrammeList() {
-        return createObservable(new Func1<Realm, List<Programme>>() {
-            @Override
-            public List<Programme> call(Realm realm) {
-                return realm.where(Programme.class).findAll();
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<List<Programme>> rxGetProgrammeListByCategories(final String[] category) {
-        return createObservable(new Func1<Realm, List<Programme>>() {
-            @Override
-            public List<Programme> call(Realm realm) {
-                return realm.where(Programme.class).in("category", category).findAll();
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
-
     public Programme getProgrammeById(final String id) {
         Programme programme = null;
         Realm realm = Realm.getDefaultInstance();
@@ -76,7 +45,7 @@ public class ProgrammeDao extends BaseDao {
         return programme;
     }
 
-    public List<Programme> getProgrammeListByKey(String key) {
+    public List<Programme> searchProgrammeListByKey(String key) {
         List<Programme> programmes = null;
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -84,5 +53,94 @@ public class ProgrammeDao extends BaseDao {
         programmes = realm.copyFromRealm(all);
         realm.commitTransaction();
         return programmes;
+    }
+
+    public Observable<Programme> rxGetProgrammeById(final String id) {
+        return Observable.create(new ObservableOnSubscribe<Programme>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Programme> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Programme first = realm.where(Programme.class).equalTo("id", id).findAll().first();
+                        Programme programme = realm.copyFromRealm(first);
+                        e.onNext(programme);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<Programme>> rxSearchProgrammeListByKey(final String key) {
+        return Observable.create(new ObservableOnSubscribe<List<Programme>>() {
+            @Override
+            public void subscribe(final ObservableEmitter<List<Programme>> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<Programme> all = realm.where(Programme.class).contains("title", key).or().contains("category", key).findAll();
+                        List<Programme> programmes = realm.copyFromRealm(all);
+                        e.onNext(programmes);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Void> rxSaveOrUpdate(final List<Programme> programmes) {
+        return Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Void> e) throws Exception {
+                LogUtil.e(ProgrammeDao.class, "rxSaveOrUpdate", programmes.size() + "");
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.copyToRealmOrUpdate(programmes);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<Programme>> rxGetAllProgrammeList() {
+        return Observable.create(new ObservableOnSubscribe<List<Programme>>() {
+            @Override
+            public void subscribe(final ObservableEmitter<List<Programme>> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<Programme> all = realm.where(Programme.class).findAll();
+                        List<Programme> programmes = realm.copyFromRealm(all);
+                        e.onNext(programmes);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<Programme>> rxGetProgrammeListByCategories(final String[] category) {
+        return Observable.create(new ObservableOnSubscribe<List<Programme>>() {
+            @Override
+            public void subscribe(final ObservableEmitter<List<Programme>> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<Programme> all = realm.where(Programme.class).in("category", category).findAll();
+                        List<Programme> programmes = realm.copyFromRealm(all);
+                        e.onNext(programmes);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }

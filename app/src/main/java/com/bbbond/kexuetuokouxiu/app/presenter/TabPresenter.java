@@ -7,7 +7,8 @@ import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.List;
 
-import rx.Subscriber;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by bbbond on 2017/4/30.
@@ -32,21 +33,15 @@ public class TabPresenter implements TabContract.Presenter {
     @Override
     public void getProgrammeList(final String[] category, final boolean shouldFetchRemote) {
         model.getProgrammeListFromLocalByCategories(category)
-                .subscribe(new Subscriber<List<Programme>>() {
-
+                .subscribe(new Observer<List<Programme>>() {
                     @Override
-                    public void onStart() {
+                    public void onSubscribe(Disposable d) {
                         view.refreshing(true);
                     }
 
                     @Override
-                    public void onCompleted() {
-                        if ((allCategoryProgrammeList == null || allCategoryProgrammeList.size() == 0) && shouldFetchRemote)
-                            getProgrammeListRemote(category);
-                        else {
-                            view.receiveProgrammeList(allCategoryProgrammeList);
-                            view.refreshing(false);
-                        }
+                    public void onNext(List<Programme> programmes) {
+                        allCategoryProgrammeList = programmes;
                     }
 
                     @Override
@@ -56,8 +51,13 @@ public class TabPresenter implements TabContract.Presenter {
                     }
 
                     @Override
-                    public void onNext(List<Programme> programmeList) {
-                        allCategoryProgrammeList = programmeList;
+                    public void onComplete() {
+                        if ((allCategoryProgrammeList == null || allCategoryProgrammeList.size() == 0) && shouldFetchRemote)
+                            getProgrammeListRemote(category);
+                        else {
+                            view.receiveProgrammeList(allCategoryProgrammeList);
+                            view.refreshing(false);
+                        }
                     }
                 });
     }
@@ -66,23 +66,15 @@ public class TabPresenter implements TabContract.Presenter {
     public void getProgrammeListRemote(final String[] category) {
         LogUtil.d(TabPresenter.class, "getProgrammeListRemote", "");
         model.fetchRemoteFromJson()
-                .subscribe(new Subscriber<List<Programme>>() {
-
+                .subscribe(new Observer<List<Programme>>() {
                     @Override
-                    public void onStart() {
+                    public void onSubscribe(Disposable d) {
                         view.refreshing(true);
                     }
 
                     @Override
-                    public void onCompleted() {
-                        LogUtil.d(TabPresenter.class, "getProgrammeListRemote", allProgrammeList.size());
-                        if (allProgrammeList == null || allProgrammeList.size() == 0) {
-                            LogUtil.d(TabPresenter.class, "getProgrammeListRemote", "getProgrammeListRemoteFromXml");
-                            getProgrammeListRemoteFromXml(category);
-                        } else {
-                            LogUtil.d(TabPresenter.class, "getProgrammeListRemote", "saveProgrammeList");
-                            saveProgrammeList(category);
-                        }
+                    public void onNext(List<Programme> programmes) {
+                        allProgrammeList = programmes;
                     }
 
                     @Override
@@ -93,8 +85,15 @@ public class TabPresenter implements TabContract.Presenter {
                     }
 
                     @Override
-                    public void onNext(List<Programme> programmeList) {
-                        allProgrammeList = programmeList;
+                    public void onComplete() {
+                        LogUtil.d(TabPresenter.class, "getProgrammeListRemote", allProgrammeList.size());
+                        if (allProgrammeList == null || allProgrammeList.size() == 0) {
+                            LogUtil.d(TabPresenter.class, "getProgrammeListRemote", "getProgrammeListRemoteFromXml");
+                            getProgrammeListRemoteFromXml(category);
+                        } else {
+                            LogUtil.d(TabPresenter.class, "getProgrammeListRemote", "saveProgrammeList");
+                            saveProgrammeList(category);
+                        }
                     }
                 });
     }
@@ -102,19 +101,15 @@ public class TabPresenter implements TabContract.Presenter {
     private void getProgrammeListRemoteFromXml(final String[] category) {
         LogUtil.d(TabPresenter.class, "getProgrammeListRemoteFromXml", "");
         model.fetchRemoteFromXml()
-                .subscribe(new Subscriber<List<Programme>>() {
-
+                .subscribe(new Observer<List<Programme>>() {
                     @Override
-                    public void onStart() {
+                    public void onSubscribe(Disposable d) {
                         view.refreshing(true);
                     }
 
                     @Override
-                    public void onCompleted() {
-                        if (allCategoryProgrammeList != null && allCategoryProgrammeList.size() > 0)
-                            saveProgrammeList(category);
-                        else
-                            view.refreshing(false);
+                    public void onNext(List<Programme> programmes) {
+                        allProgrammeList = programmes;
                     }
 
                     @Override
@@ -124,8 +119,11 @@ public class TabPresenter implements TabContract.Presenter {
                     }
 
                     @Override
-                    public void onNext(List<Programme> programmeList) {
-                        allProgrammeList = programmeList;
+                    public void onComplete() {
+                        if (allCategoryProgrammeList != null && allCategoryProgrammeList.size() > 0)
+                            saveProgrammeList(category);
+                        else
+                            view.refreshing(false);
                     }
                 });
     }
@@ -133,16 +131,15 @@ public class TabPresenter implements TabContract.Presenter {
     private void saveProgrammeList(final String[] category) {
         LogUtil.d(TabPresenter.class, "saveProgrammeList", "");
         model.saveProgrammeList(allProgrammeList)
-                .subscribe(new Subscriber<Void>() {
+                .subscribe(new Observer<Void>() {
                     @Override
-                    public void onStart() {
+                    public void onSubscribe(Disposable d) {
                         view.refreshing(true);
                     }
 
                     @Override
-                    public void onCompleted() {
-                        LogUtil.d(TabPresenter.class, "saveProgrammeList", "onCompleted");
-                        getProgrammeList(category, false);
+                    public void onNext(Void aVoid) {
+                        LogUtil.d(TabPresenter.class, "saveProgrammeList", "onNext");
                     }
 
                     @Override
@@ -152,8 +149,9 @@ public class TabPresenter implements TabContract.Presenter {
                     }
 
                     @Override
-                    public void onNext(Void aVoid) {
-                        LogUtil.d(TabPresenter.class, "saveProgrammeList", "onNext");
+                    public void onComplete() {
+                        LogUtil.d(TabPresenter.class, "saveProgrammeList", "onCompleted");
+                        getProgrammeList(category, false);
                     }
                 });
     }
