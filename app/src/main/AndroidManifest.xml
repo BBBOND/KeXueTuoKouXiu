@@ -48,6 +48,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar2"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".app.activity.CommentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar2"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <service android:name=".app.service.DownloadService" />
     </application>

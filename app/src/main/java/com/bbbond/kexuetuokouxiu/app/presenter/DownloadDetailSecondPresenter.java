@@ -8,10 +8,8 @@ import com.bbbond.kexuetuokouxiu.app.fragment.HomeFragment;
 import com.bbbond.kexuetuokouxiu.app.model.DownloadDetailSecondModel;
 import com.bbbond.kexuetuokouxiu.app.service.DownloadService;
 import com.bbbond.kexuetuokouxiu.bean.DownloadingItem;
-import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.bean.ProgrammeCache;
 import com.bbbond.kexuetuokouxiu.db.ProgrammeCacheDao;
-import com.bbbond.kexuetuokouxiu.db.ProgrammeDao;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 
 import java.util.ArrayList;

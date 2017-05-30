@@ -21,8 +21,10 @@ import com.bbbond.kexuetuokouxiu.utils.StrUtil;
 
 import java.util.Locale;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import zlc.season.rxdownload2.RxDownload;
 import zlc.season.rxdownload2.entity.DownloadEvent;
 import zlc.season.rxdownload2.entity.DownloadFlag;
@@ -97,6 +99,8 @@ public class DownloadService extends Service {
 
             subscribe = mRxDownload
                     .receiveDownloadStatus(cache.getUrl())
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<DownloadEvent>() {
                         @Override
                         public void accept(DownloadEvent downloadEvent) throws Exception {

@@ -75,7 +75,7 @@ public class DownloadDetailSecondTabFragment extends Fragment implements Downloa
                 if (isDownloading) {
                     presenter.pauseDownloadingItem(getContext(), downloadingItem.getUrl());
                 } else {
-                    Toast.makeText(getContext(), "开始下载", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "开始下载，请等待", Toast.LENGTH_SHORT).show();
                     presenter.startDownloadingItem(getContext(), downloadingItem.getUrl());
                 }
             }

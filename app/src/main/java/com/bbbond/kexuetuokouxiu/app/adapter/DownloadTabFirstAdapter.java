@@ -49,8 +49,7 @@ public class DownloadTabFirstAdapter extends RecyclerView.Adapter<DownloadTabFir
         final ProgrammeCache programmeCache = programmeCacheList.get(position);
         holder.tvTitle.setText(programmeCache.getTitle());
         holder.tvCreator.setText(programmeCache.getCreator());
-        holder.tvSize.setText(programmeCache.getCategory());
-        holder.itemView.setTag(StrUtil.byteFormat(programmeCache.getSize()));
+        holder.tvSize.setText(programmeCache.getSize() == -1 ? "未知" : StrUtil.byteFormat(programmeCache.getSize()));
         if (listener != null)
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

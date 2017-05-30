@@ -64,6 +64,8 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
         initData();
         initView();
         initEvent();
+        if (!programme.getMediaUrl().equals(SimplePlayer.getInstance().getMediaUri()))
+            startPlayAfterCheck();
     }
 
     private void initData() {
@@ -293,6 +295,14 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                 rewind.setEnabled(false);
                 sbProgress.setEnabled(false);
                 break;
+//            default:
+//                playState = 0;
+//                play.setEnabled(true);
+//                play.setImageResource(R.drawable.ic_play);
+//                forward.setEnabled(true);
+//                rewind.setEnabled(true);
+//                sbProgress.setEnabled(false);
+//                break;
         }
     }
 
@@ -326,14 +336,16 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
 
     private void startDownload(final boolean downloadNow) {
         RxPermissions permissions = new RxPermissions(this);
-        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        permissions
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .doOnNext(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean granted) throws Exception {
-
                         if (!granted) {  //权限被拒绝
                             Toast.makeText(getApplicationContext(), "下载已取消", Toast.LENGTH_SHORT).show();
                         } else {  // 开始下载
+                            download.setEnabled(false);
+                            download.setVisibility(View.GONE);
                             ProgrammeCache programmeCache = new ProgrammeCache();
                             programmeCache.setId(programme.getId());
                             programmeCache.setCategory(programme.getCategory());
@@ -346,6 +358,7 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                             ProgrammeCacheDao.getInstance().saveOrUpdate(programmeCache);
 
                             if (downloadNow) {
+                                Toast.makeText(getApplicationContext(), "开始下载", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), DownloadService.class);
                                 intent.putExtra(DownloadService.PROGRAMME, programmeCache);
                                 startService(intent);
@@ -355,7 +368,6 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                         }
                     }
                 }).subscribe();
-
     }
 
     @Override
@@ -393,6 +405,11 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                         pause();
                         break;
                 }
+                break;
+            case R.id.ibtn_comment:
+                Intent intent = new Intent(this, CommentActivity.class);
+                intent.putExtra(PROGRAMME, programme);
+                startActivity(intent);
                 break;
             case R.id.ibtn_forward:
                 forward();
@@ -474,8 +491,6 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
             }
         });
         initState(SimplePlayer.getInstance().getState());
-        if (!programme.getMediaUrl().equals(SimplePlayer.getInstance().getMediaUri()))
-            startPlayAfterCheck();
     }
 
     @Override

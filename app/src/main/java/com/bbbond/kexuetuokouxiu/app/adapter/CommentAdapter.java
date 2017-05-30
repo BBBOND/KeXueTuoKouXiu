@@ -22,10 +22,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     private Context context;
     private List<Comment> comments;
+    private OnLongClickListener longClickListener;
 
     public CommentAdapter(Context context, List<Comment> comments) {
         this.context = context;
         this.comments = comments;
+    }
+
+    public void setOnLongClickListener(OnLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     @Override
@@ -35,12 +40,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Comment comment = comments.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final Comment comment = comments.get(position);
+        holder.tvId.setText(String.format(Locale.CHINA, "#%1$s", position + 1));
         holder.tvCreator.setText(comment.getCreator());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM hh:mm", Locale.CHINA);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 hh:mm", Locale.CHINA);
         holder.tvPubDate.setText(format.format(new Date(comment.getPubDate())));
         holder.tvContent.setText(comment.getDescription());
+        if (longClickListener != null)
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return longClickListener.longClick(position, comment);
+                }
+            });
     }
 
     @Override
@@ -50,15 +63,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView tvId;
         TextView tvCreator;
         TextView tvPubDate;
         TextView tvContent;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            tvCreator = (TextView) itemView.findViewById(R.id.tvCreator);
-            tvPubDate = (TextView) itemView.findViewById(R.id.tvPubDate);
-            tvContent = (TextView) itemView.findViewById(R.id.tvContent);
+            tvId = (TextView) itemView.findViewById(R.id.tv_id);
+            tvCreator = (TextView) itemView.findViewById(R.id.tv_creator);
+            tvPubDate = (TextView) itemView.findViewById(R.id.tv_pub_date);
+            tvContent = (TextView) itemView.findViewById(R.id.tv_content);
         }
+    }
+
+    public interface OnLongClickListener {
+        boolean longClick(int pos, Comment comment);
     }
 }

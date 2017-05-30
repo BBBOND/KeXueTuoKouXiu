@@ -46,6 +46,26 @@ public class RemoteClient {
         queue.add(3, request, response);
     }
 
+    public static Observable<String> getComments(final String url) {
+        return Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(final ObservableEmitter<String> e) throws Exception {
+                getComments(url, new SimpleResponseListener<String>() {
+                    @Override
+                    public void onSucceed(int what, Response<String> response) {
+                        e.onNext(response.get());
+                        e.onComplete();
+                    }
+
+                    @Override
+                    public void onFailed(int what, Response<String> response) {
+                        e.onError(response.getException());
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
     public static Observable<String> getProgrammesFromXml() {
         return Observable.create(new ObservableOnSubscribe<String>() {
             @Override

@@ -18,7 +18,6 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import zlc.season.rxdownload2.RxDownload;
 import zlc.season.rxdownload2.entity.DownloadEvent;
 import zlc.season.rxdownload2.entity.DownloadFlag;
@@ -70,7 +69,7 @@ public class DownloadTabSecondAdapter extends RecyclerView.Adapter<DownloadTabSe
                         switch (downloadEvent.getFlag()) {
                             case DownloadFlag.PAUSED:
                                 holder.pbProgress.setVisibility(View.GONE);
-                                holder.tvSize.setText(String.format(Locale.CHINA, "已暂停 %1$s/%2$s", downloadEvent.getDownloadStatus().getFormatDownloadSize(), downloadEvent.getDownloadStatus().getFormatTotalSize()));
+                                holder.tvSize.setText(String.format(Locale.CHINA, "已暂停，点击继续下载 %1$s/%2$s", downloadEvent.getDownloadStatus().getFormatDownloadSize(), downloadEvent.getDownloadStatus().getFormatTotalSize()));
                                 if (clickListener != null)
                                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                                         @Override
