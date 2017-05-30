@@ -18,6 +18,7 @@
     <string name="download_num">(%1$s)</string>
     <string name="pause_all">全部暂停</string>
     <string name="clear_all">清空</string>
+    <string name="no_cache_data">无任何缓存数据</string>
 
 
     <string-array name="tabs">

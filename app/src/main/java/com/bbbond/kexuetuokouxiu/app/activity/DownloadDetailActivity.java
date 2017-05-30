@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.adapter.TabViewPagerAdapter;
 import com.bbbond.kexuetuokouxiu.app.fragment.DownloadDetailFirstTabFragment;
+import com.bbbond.kexuetuokouxiu.app.fragment.DownloadDetailSecondTabFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,20 +62,17 @@ public class DownloadDetailActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putInt(POS, pos);
         firstTabFragment.setArguments(bundle);
-
-        DownloadDetailFirstTabFragment firstTabFragment1 = new DownloadDetailFirstTabFragment();
-        Bundle bundle1 = new Bundle();
-        bundle.putInt(POS, pos);
-        firstTabFragment1.setArguments(bundle1);
         fragmentList.add(firstTabFragment);
-        fragmentList.add(firstTabFragment1);
+
+        DownloadDetailSecondTabFragment secondTabFragment = new DownloadDetailSecondTabFragment();
+        secondTabFragment.setArguments(bundle);
+        fragmentList.add(secondTabFragment);
     }
 
     private void initView() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);

@@ -13,6 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * 缓存节目数据层
@@ -37,7 +38,7 @@ public class ProgrammeCacheDao extends BaseDao {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealm(programmeCache);
+                realm.copyToRealmOrUpdate(programmeCache);
             }
         });
     }
@@ -99,13 +100,46 @@ public class ProgrammeCacheDao extends BaseDao {
         return programmeCaches;
     }
 
-    public List<ProgrammeCache> getProgrammeCacheListByCategories(final String[] category) {
+    public List<ProgrammeCache> getProgrammeCacheListByCategories(String[] category) {
         List<ProgrammeCache> programmeCaches = null;
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         programmeCaches = realm.copyFromRealm(realm.where(ProgrammeCache.class).in("category", category).findAll());
         realm.commitTransaction();
         return programmeCaches;
+    }
+
+    public List<ProgrammeCache> getProgrammeCacheListByCategoriesAndUrl(String[] category, String[] urls) {
+        List<ProgrammeCache> programmeCaches = null;
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        programmeCaches = realm.copyFromRealm(realm.where(ProgrammeCache.class).in("category", category).in("url", urls).equalTo("isFinished", false).findAllSorted("title"));
+        realm.commitTransaction();
+        return programmeCaches;
+    }
+
+    public void downloadProgrammeFinish(final String id) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.where(ProgrammeCache.class).equalTo("id", id).findFirst().setFinished(true);
+            }
+        });
+    }
+
+    public void downloadProgrammeFinish(final String id, final long size) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ProgrammeCache first = realm.where(ProgrammeCache.class).equalTo("id", id).findFirst();
+                if (first != null) {
+                    first.setFinished(true);
+                    first.setSize(size);
+                }
+            }
+        });
     }
 
 
@@ -145,6 +179,22 @@ public class ProgrammeCacheDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<Void> rxDeleteByUrl(final String url) {
+        return Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Void> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.where(ProgrammeCache.class).equalTo("url", url).findFirst().deleteFromRealm();
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<ProgrammeCache> rxGetCacheById(final String id) {
         return Observable.create(new ObservableOnSubscribe<ProgrammeCache>() {
             @Override
@@ -154,6 +204,24 @@ public class ProgrammeCacheDao extends BaseDao {
                     @Override
                     public void execute(Realm realm) {
                         ProgrammeCache first = realm.where(ProgrammeCache.class).equalTo("id", id).findFirst();
+                        ProgrammeCache cache = realm.copyFromRealm(first);
+                        e.onNext(cache);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ProgrammeCache> rxGetCacheByUrl(final String url) {
+        return Observable.create(new ObservableOnSubscribe<ProgrammeCache>() {
+            @Override
+            public void subscribe(final ObservableEmitter<ProgrammeCache> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        ProgrammeCache first = realm.where(ProgrammeCache.class).equalTo("url", url).findFirst();
                         ProgrammeCache cache = realm.copyFromRealm(first);
                         e.onNext(cache);
                         e.onComplete();
@@ -215,7 +283,7 @@ public class ProgrammeCacheDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<List<ProgrammeCache>> rxGetProgrammeCacheListByCategories(final String[] category) {
+    public Observable<List<ProgrammeCache>> rxGetAllProgrammeCacheListByCategories(final String[] category) {
         return Observable.create(new ObservableOnSubscribe<List<ProgrammeCache>>() {
             @Override
             public void subscribe(final ObservableEmitter<List<ProgrammeCache>> e) throws Exception {
@@ -233,4 +301,21 @@ public class ProgrammeCacheDao extends BaseDao {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<List<ProgrammeCache>> rxGetProgrammeCachedListByCategories(final String[] category) {
+        return Observable.create(new ObservableOnSubscribe<List<ProgrammeCache>>() {
+            @Override
+            public void subscribe(final ObservableEmitter<List<ProgrammeCache>> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<ProgrammeCache> all = realm.where(ProgrammeCache.class).in("category", category).equalTo("isFinished", true).findAllSorted("title", Sort.DESCENDING);
+                        List<ProgrammeCache> caches = realm.copyFromRealm(all);
+                        e.onNext(caches);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
 }

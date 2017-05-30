@@ -19,6 +19,8 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
     private String title;
     private String creator;
     private String category;
+    private String url;
+    private Long size;
     private boolean isFinished;
 
     public ProgrammeCache() {
@@ -30,6 +32,8 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
         title = in.readString();
         creator = in.readString();
         category = in.readString();
+        url = in.readString();
+        size = in.readLong();
         isFinished = in.readByte() != 0;
     }
 
@@ -85,6 +89,22 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
         this.category = category;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
     public boolean isFinished() {
         return isFinished;
     }
@@ -120,6 +140,8 @@ public class ProgrammeCache extends RealmObject implements Parcelable {
         dest.writeString(title);
         dest.writeString(creator);
         dest.writeString(category);
+        dest.writeString(url);
+        dest.writeLong(size);
         dest.writeByte((byte) (isFinished ? 1 : 0));
     }
 }

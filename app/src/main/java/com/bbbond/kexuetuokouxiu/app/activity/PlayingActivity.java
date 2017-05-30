@@ -1,11 +1,9 @@
 package com.bbbond.kexuetuokouxiu.app.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -23,23 +21,23 @@ import android.widget.Toast;
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.app.contract.PlayingContract;
 import com.bbbond.kexuetuokouxiu.app.presenter.PlayingPresenter;
+import com.bbbond.kexuetuokouxiu.app.service.DownloadService;
 import com.bbbond.kexuetuokouxiu.bean.Programme;
 import com.bbbond.kexuetuokouxiu.bean.ProgrammeCache;
 import com.bbbond.kexuetuokouxiu.db.ProgrammeCacheDao;
 import com.bbbond.kexuetuokouxiu.helper.NetHelper;
 import com.bbbond.kexuetuokouxiu.utils.LogUtil;
 import com.bbbond.kexuetuokouxiu.utils.ParseUtil;
+import com.bbbond.kexuetuokouxiu.utils.StrUtil;
 import com.bbbond.simpleplayer.SimplePlayer;
 import com.bbbond.simpleplayer.model.MediaData;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
-import zlc.season.rxdownload2.RxDownload;
-import zlc.season.rxdownload2.entity.DownloadEvent;
-import zlc.season.rxdownload2.entity.DownloadFlag;
 
 import static com.bbbond.simpleplayer.SimplePlayer.EXTRA_CURRENT_MEDIA_DESCRIPTION;
 
@@ -115,7 +113,7 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
         forward.setEnabled(false);
         rewind.setEnabled(false);
         sbProgress.setEnabled(false);
-        download.setEnabled(null == cache);
+        download.setVisibility(null != cache && cache.isFinished() ? View.GONE : View.VISIBLE);
     }
 
     private void initEvent() {
@@ -129,28 +127,53 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
     }
 
     private void startPlay() {
-        List<MediaData> mediaDataList = new ArrayList<>();
-        MediaData mediaData = ParseUtil.parseProgramme2MediaData(programme);
-        if (cache != null && cache.isFinished())
-            mediaData.setMediaUri(cache.getPath());
-        mediaDataList.add(mediaData);
-        SimplePlayer.getInstance().setMediaDataList("music", mediaDataList, null);
-        SimplePlayer.getInstance().getTransportControls(this, new SimplePlayer.GetTransportControlsCallback() {
-            @Override
-            public void success(MediaControllerCompat.TransportControls transportControls) {
-                if (transportControls != null) {
-                    transportControls.playFromMediaId(programme.getId(), null);
-                    Toast.makeText(PlayingActivity.this, "开始加载节目...", Toast.LENGTH_SHORT).show();
-                } else {
-                    LogUtil.e(PlayingActivity.class, "startPlay", "获取控制器失败");
-                }
-            }
+        if (programme.getMediaUrl().equals(SimplePlayer.getInstance().getMediaUri())
+                || (cache != null && cache.getPath().equals(SimplePlayer.getInstance().getMediaUri()))) {
+            if (SimplePlayer.getInstance().getState() == PlaybackStateCompat.STATE_PAUSED
+                    || SimplePlayer.getInstance().getState() == PlaybackStateCompat.STATE_STOPPED) {
+                SimplePlayer.getInstance().getTransportControls(this, new SimplePlayer.GetTransportControlsCallback() {
+                    @Override
+                    public void success(MediaControllerCompat.TransportControls transportControls) {
+                        if (transportControls != null) {
+                            transportControls.play();
+                            Toast.makeText(PlayingActivity.this, "开始加载节目...", Toast.LENGTH_SHORT).show();
+                        } else {
+                            LogUtil.e(PlayingActivity.class, "startPlay", "获取控制器失败");
+                        }
+                    }
 
-            @Override
-            public void error(String errorMsg) {
-                LogUtil.e(PlayingActivity.class, "startPlay", errorMsg);
+                    @Override
+                    public void error(String errorMsg) {
+                        LogUtil.e(PlayingActivity.class, "startPlay", errorMsg);
+                    }
+                });
             }
-        });
+        } else {
+            List<MediaData> mediaDataList = new ArrayList<>();
+            MediaData mediaData = ParseUtil.parseProgramme2MediaData(programme);
+            if (cache != null && cache.isFinished() && new File(cache.getPath()).exists()) {
+                mediaData.setMediaUri(cache.getPath());
+                LogUtil.d(PlayingActivity.class, "startPlay", cache.getPath());
+            }
+            mediaDataList.add(mediaData);
+            SimplePlayer.getInstance().setMediaDataList("music", mediaDataList, null);
+            SimplePlayer.getInstance().getTransportControls(this, new SimplePlayer.GetTransportControlsCallback() {
+                @Override
+                public void success(MediaControllerCompat.TransportControls transportControls) {
+                    if (transportControls != null) {
+                        transportControls.playFromMediaId(programme.getId(), null);
+                        Toast.makeText(PlayingActivity.this, "开始加载节目...", Toast.LENGTH_SHORT).show();
+                    } else {
+                        LogUtil.e(PlayingActivity.class, "startPlay", "获取控制器失败");
+                    }
+                }
+
+                @Override
+                public void error(String errorMsg) {
+                    LogUtil.e(PlayingActivity.class, "startPlay", errorMsg);
+                }
+            });
+        }
     }
 
     private void play() {
@@ -307,6 +330,7 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                 .doOnNext(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean granted) throws Exception {
+
                         if (!granted) {  //权限被拒绝
                             Toast.makeText(getApplicationContext(), "下载已取消", Toast.LENGTH_SHORT).show();
                         } else {  // 开始下载
@@ -315,36 +339,22 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                             programmeCache.setCategory(programme.getCategory());
                             programmeCache.setCreator(programme.getCreator());
                             programmeCache.setTitle(programme.getTitle());
-                            programmeCache.setPath(getDiskCachePath(PlayingActivity.this) + "/" + programme.getId());
+                            programmeCache.setPath(StrUtil.getDiskCachePath(PlayingActivity.this) + "/" + programme.getId());
+                            programmeCache.setUrl(programme.getMediaUrl());
+                            programmeCache.setSize(-1L);
                             programmeCache.setFinished(false);
                             ProgrammeCacheDao.getInstance().saveOrUpdate(programmeCache);
 
                             if (downloadNow) {
-                                RxDownload
-                                        .getInstance(getApplicationContext())
-                                        .serviceDownload(programme.getMediaUrl(), programme.getId(), getDiskCachePath(getApplicationContext()));
-
-                                RxDownload
-                                        .getInstance(getApplicationContext())
-                                        .receiveDownloadStatus(programme.getMediaUrl())
-                                        .subscribe(new Consumer<DownloadEvent>() {
-                                            @Override
-                                            public void accept(DownloadEvent downloadEvent) throws Exception {
-                                                if (downloadEvent.getFlag() == DownloadFlag.FAILED) {
-                                                    Toast.makeText(getApplicationContext(), programme.getTitle() + "\n下载失败", Toast.LENGTH_SHORT).show();
-                                                    ProgrammeCacheDao.getInstance().deleteById(programme.getId());
-                                                } else if (downloadEvent.getFlag() == DownloadFlag.COMPLETED) {
-                                                    Toast.makeText(getApplicationContext(), "开始下载", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
-                                Toast.makeText(getApplicationContext(), "开始下载", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), DownloadService.class);
+                                intent.putExtra(DownloadService.PROGRAMME, programmeCache);
+                                startService(intent);
                             } else {
-                                Toast.makeText(getApplicationContext(), "等待Wi-Fi链接后下载", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "等待Wi-Fi链接后再试", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
-                });
+                }).subscribe();
 
     }
 
@@ -421,7 +431,9 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
     }
 
     private void startPlayAfterCheck() {
-        if (NetHelper.getAPNType(getApplicationContext()) == NetHelper.NO_NETWORK) {
+        if (cache != null && cache.isFinished() && new File(cache.getPath()).exists()) {
+            startPlay();
+        } else if (NetHelper.getAPNType(getApplicationContext()) == NetHelper.NO_NETWORK) {
             Toast.makeText(getApplicationContext(), "无法访问网络，请检查网络状态", Toast.LENGTH_SHORT).show();
             initState(PlaybackStateCompat.STATE_STOPPED);
         } else if (NetHelper.getAPNType(getApplicationContext()) != NetHelper.WIFI) {
@@ -510,14 +522,6 @@ public class PlayingActivity extends BaseActivity implements PlayingContract.Vie
                 }
             });
 
-        }
-    }
-
-    public static String getDiskCachePath(Context context) {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !Environment.isExternalStorageRemovable()) {
-            return context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS).getPath();
-        } else {
-            return context.getFilesDir().getPath();
         }
     }
 }

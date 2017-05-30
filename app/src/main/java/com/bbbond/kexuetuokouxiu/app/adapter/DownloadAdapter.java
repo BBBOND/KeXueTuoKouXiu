@@ -46,9 +46,9 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         String subTitle = "";
         if (item.getSize() <= 0) {
             subTitle = context.getResources().getString(R.string.download_no_data);
-        } else if (item.getCachedSize() <= 0) {
+        } else if (item.getSize() - item.getCachedSize() <= 0) {
             subTitle = context.getResources().getString(R.string.download_finish);
-        } else if (item.getCachedSize() > 0) {
+        } else if (item.getSize() - item.getCachedSize() > 0) {
             subTitle = context.getResources().getString(R.string.download_process, String.valueOf(item.getSize() - item.getCachedSize()), String.valueOf(item.getSize()));
         }
         holder.subTitle.setText(subTitle);

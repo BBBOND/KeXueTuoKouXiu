@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
     <application
         android:name=".App"
@@ -48,6 +48,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar2"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <service android:name=".app.service.DownloadService" />
     </application>
 
 </manifest>

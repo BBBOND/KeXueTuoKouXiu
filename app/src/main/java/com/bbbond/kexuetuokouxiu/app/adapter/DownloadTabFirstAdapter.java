@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.bbbond.kexuetuokouxiu.R;
 import com.bbbond.kexuetuokouxiu.bean.ProgrammeCache;
+import com.bbbond.kexuetuokouxiu.utils.StrUtil;
 
 import java.util.List;
 
@@ -21,9 +22,14 @@ public class DownloadTabFirstAdapter extends RecyclerView.Adapter<DownloadTabFir
     private Context context;
     private List<ProgrammeCache> programmeCacheList;
     private OnClickListener listener;
+    private OnLongClickListener longClickListener;
 
     public void setOnClickListener(OnClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnLongClickListener(OnLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     public DownloadTabFirstAdapter(Context context, List<ProgrammeCache> programmeCacheList) {
@@ -33,7 +39,7 @@ public class DownloadTabFirstAdapter extends RecyclerView.Adapter<DownloadTabFir
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_download, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_download_detail, null);
         return new ViewHolder(view);
     }
 
@@ -43,12 +49,20 @@ public class DownloadTabFirstAdapter extends RecyclerView.Adapter<DownloadTabFir
         final ProgrammeCache programmeCache = programmeCacheList.get(position);
         holder.tvTitle.setText(programmeCache.getTitle());
         holder.tvCreator.setText(programmeCache.getCreator());
-        holder.itemView.setTag(programmeCache);
+        holder.tvSize.setText(programmeCache.getCategory());
+        holder.itemView.setTag(StrUtil.byteFormat(programmeCache.getSize()));
         if (listener != null)
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     listener.click(pos, programmeCache.getId());
+                }
+            });
+        if (longClickListener != null)
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return longClickListener.longClick(pos, programmeCache.getId());
                 }
             });
     }
@@ -73,5 +87,9 @@ public class DownloadTabFirstAdapter extends RecyclerView.Adapter<DownloadTabFir
 
     public interface OnClickListener {
         void click(int position, String id);
+    }
+
+    public interface OnLongClickListener {
+        boolean longClick(int position, String id);
     }
 }

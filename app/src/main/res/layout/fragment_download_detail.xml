@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/llTop"
@@ -11,24 +10,6 @@
         android:layout_marginBottom="0.5dp"
         android:orientation="horizontal"
         android:visibility="gone">
-
-        <TextView
-            android:id="@+id/pause_all"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="@string/pause_all"
-            android:textColor="@color/main_text"
-            android:textSize="16sp" />
-
-        <View
-            android:layout_width="0.5dp"
-            android:layout_height="match_parent"
-            android:background="@color/border" />
 
         <TextView
             android:id="@+id/clear_all"
@@ -48,7 +29,15 @@
         android:id="@+id/rv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp" />
+        android:layout_below="@id/llTop" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_cache_data"
+        android:textColor="@color/sub_text"
+        android:visibility="gone" />
+
+</RelativeLayout>

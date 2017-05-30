@@ -87,7 +87,6 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginLeft="44dp"
-                android:layout_marginRight="44dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_download" />
 
@@ -96,6 +95,7 @@
                 style="@style/Widget.AppCompat.ActionButton.Overflow"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginLeft="44dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_comment" />
         </LinearLayout>

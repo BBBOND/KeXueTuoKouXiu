@@ -55,6 +55,24 @@ public class ProgrammeDao extends BaseDao {
         return programmes;
     }
 
+    public Observable<Programme> rxGetProgrammeByUrl(final String url) {
+        return Observable.create(new ObservableOnSubscribe<Programme>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Programme> e) throws Exception {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Programme first = realm.where(Programme.class).equalTo("url", url).findAll().first();
+                        Programme programme = realm.copyFromRealm(first);
+                        e.onNext(programme);
+                        e.onComplete();
+                    }
+                });
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<Programme> rxGetProgrammeById(final String id) {
         return Observable.create(new ObservableOnSubscribe<Programme>() {
             @Override

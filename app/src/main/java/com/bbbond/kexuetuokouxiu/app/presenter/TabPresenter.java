@@ -144,7 +144,7 @@ public class TabPresenter implements TabContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtil.e(TabPresenter.class, "saveProgrammeList", e.getCause().getMessage());
+                        LogUtil.e(TabPresenter.class, "saveProgrammeList", e.getMessage());
                         view.refreshing(false);
                     }
 

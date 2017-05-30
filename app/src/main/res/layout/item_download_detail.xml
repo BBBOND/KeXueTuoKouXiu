@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center_vertical"
-    android:orientation="vertical"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp">
 
@@ -15,13 +17,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:text="No.287千年牛肉汤和万年野菜汤"
         android:textColor="@color/main_text"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:text="No.287千年牛肉汤和万年野菜汤" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title"
         android:layout_marginTop="4dp"
         android:orientation="horizontal">
 
@@ -29,9 +32,9 @@
             android:id="@+id/tv_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="80M"
             android:textColor="@color/sub_text"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="80M" />
 
         <TextView
             android:id="@+id/tv_creator"
@@ -39,9 +42,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
-            android:text="半只土豆"
             android:textColor="@color/sub_text"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="半只土豆" />
 
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
