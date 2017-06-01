@@ -2,7 +2,6 @@ package com.bbbond.kexuetuokouxiu.app.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -43,11 +42,6 @@ public class HomeFragment extends Fragment {
 
     private List<Fragment> fragmentList;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,7 +80,7 @@ public class HomeFragment extends Fragment {
     private void initView(View view) {
         tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.mipmap.ic_launcher);
+//        toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPager.setPadding(0, tabLayout.getHeight(), 0, 0);
 

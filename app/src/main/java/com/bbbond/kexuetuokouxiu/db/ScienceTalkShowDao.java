@@ -39,7 +39,8 @@ public class ScienceTalkShowDao {
     public ScienceTalkShow getScienceTalkShow() {
         ScienceTalkShow scienceTalkShow;
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         ScienceTalkShow first = realm.where(ScienceTalkShow.class).findFirst();
         scienceTalkShow = realm.copyFromRealm(first);
         realm.commitTransaction();

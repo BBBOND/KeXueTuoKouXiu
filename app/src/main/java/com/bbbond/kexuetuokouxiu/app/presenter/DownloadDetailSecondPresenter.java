@@ -75,12 +75,14 @@ public class DownloadDetailSecondPresenter implements DownloadDetailSecondContra
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         LogUtil.e(DownloadDetailSecondPresenter.class, "accept", throwable.getMessage());
+                        view.receiveDownloadingItemList(new ArrayList<DownloadingItem>());
                     }
                 });
     }
 
     @Override
     public void deleteDownloadingItem(Context context, String url, boolean deleteFile) {
+        pauseDownloadingItem(context, url);
         RxDownload
                 .getInstance(context)
                 .deleteServiceDownload(url, deleteFile)
@@ -117,27 +119,51 @@ public class DownloadDetailSecondPresenter implements DownloadDetailSecondContra
                 .getInstance(context)
                 .pauseServiceDownload(url)
                 .subscribe();
-        context.getApplicationContext().sendBroadcast(new Intent(DownloadService.ACTION_PAUSE));
+//        context.getApplicationContext().sendBroadcast(new Intent(DownloadService.ACTION_PAUSE));
     }
 
     @Override
-    public void startDownloadingItem(final Context context, String url) {
-        ProgrammeCacheDao
-                .getInstance()
-                .rxGetCacheByUrl(url)
-                .subscribe(new Consumer<ProgrammeCache>() {
+    public void startDownloadingItem(final Context context, final String url) {
+        RxDownload
+                .getInstance(context)
+                .pauseAll()
+                .subscribe(new Observer<Object>() {
                     @Override
-                    public void accept(ProgrammeCache cache) throws Exception {
-                        Intent intent = new Intent(context.getApplicationContext(), DownloadService.class);
-                        intent.putExtra(DownloadService.PROGRAMME, cache);
-                        context.getApplicationContext().startService(intent);
-                        context.getApplicationContext().sendBroadcast(new Intent(DownloadService.ACTION_RESUME));
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        ProgrammeCacheDao
+                                .getInstance()
+                                .rxGetCacheByUrl(url)
+                                .subscribe(new Consumer<ProgrammeCache>() {
+                                    @Override
+                                    public void accept(ProgrammeCache cache) throws Exception {
+                                        Intent intent = new Intent(context.getApplicationContext(), DownloadService.class);
+                                        intent.putExtra(DownloadService.PROGRAMME, cache);
+                                        context.getApplicationContext().startService(intent);
+//                        context.getApplicationContext().sendBroadcast(new Intent(DownloadService.ACTION_RESUME));
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
 
     @Override
     public void deleteAll(List<DownloadingItem> downloadingItems, Context context, boolean deleteFile) {
+        RxDownload.getInstance(context).pauseAll().subscribe();
         for (DownloadingItem item : downloadingItems) {
             RxDownload
                     .getInstance(context)

@@ -13,7 +13,6 @@ import com.yolanda.nohttp.cookie.DBCookieStore;
 
 import de.jonasrottmann.realmbrowser.RealmBrowser;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Created by Weya on 2016/11/10.
@@ -31,7 +30,7 @@ public class App extends Application {
                 .setCookieStore(new DBCookieStore(this).setEnable(false))
                 .setNetworkExecutor(new URLConnectionNetworkExecutor())
         );
-        Logger.setDebug(true);
+        Logger.setDebug(BuildConfig.DEBUG);
         Logger.setTag("NoHttp");
         Realm.init(this);
         LogHelper.init(BuildConfig.DEBUG);

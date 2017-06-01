@@ -55,7 +55,8 @@ public class ProgrammeCacheDao extends BaseDao {
 
     public ProgrammeCache getCacheById(String id) {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         ProgrammeCache first = realm.where(ProgrammeCache.class).equalTo("id", id).findFirst();
         if (first == null) {
             realm.commitTransaction();
@@ -69,7 +70,8 @@ public class ProgrammeCacheDao extends BaseDao {
 
     public Long size() {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         long count = realm.where(ProgrammeCache.class).count();
         realm.commitTransaction();
         return count;
@@ -77,16 +79,18 @@ public class ProgrammeCacheDao extends BaseDao {
 
     public Long sizeOfCategories(final String[] category) {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        long count = realm.where(ProgrammeCache.class).in("category", category).count();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
+        Long count = realm.where(ProgrammeCache.class).in("category", category).count();
         realm.commitTransaction();
         return count;
     }
 
     public Long sizeOfCategories(final String[] category, boolean cached) {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        long count = realm.where(ProgrammeCache.class).equalTo("isFinished", cached).in("category", category).count();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
+        Long count = realm.where(ProgrammeCache.class).equalTo("isFinished", cached).in("category", category).count();
         realm.commitTransaction();
         return count;
     }
@@ -94,7 +98,8 @@ public class ProgrammeCacheDao extends BaseDao {
     public List<ProgrammeCache> getAllProgrammeCacheList() {
         List<ProgrammeCache> programmeCaches = null;
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         programmeCaches = realm.copyFromRealm(realm.where(ProgrammeCache.class).findAll());
         realm.commitTransaction();
         return programmeCaches;
@@ -103,7 +108,8 @@ public class ProgrammeCacheDao extends BaseDao {
     public List<ProgrammeCache> getProgrammeCacheListByCategories(String[] category) {
         List<ProgrammeCache> programmeCaches = null;
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         programmeCaches = realm.copyFromRealm(realm.where(ProgrammeCache.class).in("category", category).findAll());
         realm.commitTransaction();
         return programmeCaches;
@@ -112,7 +118,8 @@ public class ProgrammeCacheDao extends BaseDao {
     public List<ProgrammeCache> getProgrammeCacheListByCategoriesAndUrl(String[] category, String[] urls) {
         List<ProgrammeCache> programmeCaches = null;
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         programmeCaches = realm.copyFromRealm(realm.where(ProgrammeCache.class).in("category", category).in("url", urls).equalTo("isFinished", false).findAllSorted("title"));
         realm.commitTransaction();
         return programmeCaches;

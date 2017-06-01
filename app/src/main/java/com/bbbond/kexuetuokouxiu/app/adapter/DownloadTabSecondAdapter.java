@@ -78,6 +78,7 @@ public class DownloadTabSecondAdapter extends RecyclerView.Adapter<DownloadTabSe
                                         }
                                     });
                                 break;
+                            case DownloadFlag.WAITING:
                             case DownloadFlag.STARTED:
                                 holder.pbProgress.setVisibility(View.VISIBLE);
                                 holder.pbProgress.setProgress((int) (downloadEvent.getDownloadStatus().getDownloadSize() * 100 / downloadEvent.getDownloadStatus().getTotalSize()));

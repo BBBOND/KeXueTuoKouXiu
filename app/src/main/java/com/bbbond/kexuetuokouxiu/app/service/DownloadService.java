@@ -53,6 +53,8 @@ public class DownloadService extends Service {
 
     private DownloadReceiver mDownloadReceiver = new DownloadReceiver();
 
+    private NotificationCompat.Builder builder;
+    private int id;
 
     @Override
     public void onCreate() {
@@ -87,10 +89,14 @@ public class DownloadService extends Service {
         if (cache != null) {
             download(cache);
         }
-        return START_REDELIVER_INTENT;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void download(final ProgrammeCache cache) {
+        if (manager == null)
+            manager = NotificationManagerCompat.from(this);
+        if (builder == null)
+            builder = new NotificationCompat.Builder(this);
         if (cache != null) {
             LogUtil.d(DownloadService.class, "download", cache.getTitle());
             mRxDownload
@@ -100,10 +106,11 @@ public class DownloadService extends Service {
             subscribe = mRxDownload
                     .receiveDownloadStatus(cache.getUrl())
                     .observeOn(Schedulers.io())
-                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
                     .subscribe(new Consumer<DownloadEvent>() {
                         @Override
                         public void accept(DownloadEvent downloadEvent) throws Exception {
+                            showNotification(cache.getTitle(), downloadEvent);
                             if (downloadEvent.getFlag() == DownloadFlag.FAILED) {
                                 ProgrammeCacheDao.getInstance().deleteById(cache.getId());
                                 LogUtil.d(DownloadService.class, "download", "下载失败");
@@ -119,72 +126,65 @@ public class DownloadService extends Service {
                                     subscribe.dispose();
                                 }
                             }
-                            showNotification(cache.getTitle(), downloadEvent);
                         }
                     });
         }
     }
 
     public void showNotification(String title, DownloadEvent downloadEvent) {
-        if (manager == null)
-            manager = NotificationManagerCompat.from(this);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        int id;
-        Notification notification;
         if (downloadEvent.getFlag() == DownloadFlag.FAILED) {
             manager.cancel(DOWNLOADING_ID);
-            notification = builder
+            builder
                     .setContentTitle(title)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentText("下载失败")
-                    .setOngoing(false)
-                    .build();
+                    .setProgress(0, 0, false)
+                    .setContentIntent(null)
+                    .setOngoing(false);
             id = DOWNLOADING_ID + 1;
             LogUtil.d(DownloadService.class, "showNotification", "下载失败");
         } else if (downloadEvent.getFlag() == DownloadFlag.COMPLETED) {
             manager.cancel(DOWNLOADING_ID);
-            notification = builder
+            builder
                     .setContentTitle(title)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentText("下载完成")
-                    .setOngoing(false)
-                    .build();
+                    .setProgress(0, 0, false)
+                    .setContentIntent(null)
+                    .setOngoing(false);
             id = DOWNLOADING_ID + 2;
             LogUtil.d(DownloadService.class, "showNotification", "下载完成");
-        } else if (downloadEvent.getFlag() == DownloadFlag.STARTED) {
-            DownloadStatus status = downloadEvent.getDownloadStatus();
-            String s;
-            try {
-                s = String.format(Locale.CHINA, "%1$s/%2$s 已下载 %3$2d%%", status.getFormatDownloadSize(), status.getFormatTotalSize(), (status.getDownloadSize() * 100 / status.getTotalSize()));
-            } catch (Exception e) {
-                s = "0M/0M 0%";
-                e.printStackTrace();
-            }
-            notification = builder
+        } else if (downloadEvent.getFlag() == DownloadFlag.STARTED || downloadEvent.getFlag() == DownloadFlag.WAITING) {
+            builder
                     .setContentTitle(title)
                     .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentText(s)
                     .setOngoing(true)
                     .setContentIntent(mPauseIntent)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .build();
+                    .setProgress(100, (int) (downloadEvent.getDownloadStatus().getDownloadSize() * 100 / downloadEvent.getDownloadStatus().getTotalSize()), false);
+            try {
+                builder
+                        .setContentText(String.format(Locale.CHINA, "%1$s/%2$s", downloadEvent.getDownloadStatus().getFormatDownloadSize(), downloadEvent.getDownloadStatus().getFormatTotalSize()));
+            } catch (Exception e) {
+                builder
+                        .setContentText("0M/0M");
+            }
             id = DOWNLOADING_ID;
         } else if (downloadEvent.getFlag() == DownloadFlag.PAUSED) {
-            notification = builder
+            builder
                     .setContentTitle(title)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentText("已暂停")
+                    .setProgress(0, 0, false)
                     .setContentIntent(mResumeIntent)
                     .setOngoing(false)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .build();
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
             id = DOWNLOADING_ID;
         } else {
             manager.cancel(DOWNLOADING_ID);
             return;
         }
-        manager.notify(id, notification);
+        manager.notify(id, builder.build());
     }
 
     @Override

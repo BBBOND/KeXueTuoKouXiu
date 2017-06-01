@@ -37,7 +37,8 @@ public class ProgrammeDao extends BaseDao {
     public Programme getProgrammeById(final String id) {
         Programme programme = null;
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         Programme first = realm.where(Programme.class).equalTo("id", id).findAll().first();
         if (first != null)
             programme = realm.copyFromRealm(first);
@@ -48,7 +49,8 @@ public class ProgrammeDao extends BaseDao {
     public List<Programme> searchProgrammeListByKey(String key) {
         List<Programme> programmes = null;
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
         RealmResults<Programme> all = realm.where(Programme.class).contains("title", key).or().contains("category", key).findAll();
         programmes = realm.copyFromRealm(all);
         realm.commitTransaction();
