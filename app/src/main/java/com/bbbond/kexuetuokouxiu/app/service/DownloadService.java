@@ -84,7 +84,15 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final ProgrammeCache cache = intent.getParcelableExtra(PROGRAMME);
+        ProgrammeCache cache = null;
+        if (intent == null) {
+            stopSelf();
+        } else {
+            cache = intent.getParcelableExtra(PROGRAMME);
+        }
+        if (cache == null) {
+            stopSelf();
+        }
         LogUtil.d(DownloadService.class, "onStartCommand", "");
         if (cache != null) {
             download(cache);
